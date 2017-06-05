@@ -111,6 +111,28 @@ config :sample, Sample.Mailer,
 Adding new adapters is super easy and we are definitely looking for contributions on that front. Get in touch if you want
 to help!
 
+## Async Emails
+
+Swoosh does not make any special arrangements for sending emails in a non-blocking manner.
+
+To send asynchronous emails in Swoosh, one can simply leverage Elixir's standard library:
+
+```elixir
+Task.start(fn ->
+  %{name: "Tony Stark", email: "tony.stark@example.com"}
+  |> Sample.UserEmail.welcome
+  |> Sample.Mailer.deliver
+end)
+```
+
+Please take a look at the official docs for [Task](https://hexdocs.pm/elixir/Task.html) for further options.
+
+Note: it is not to say that `Task.start` is enough to cover the whole async aspect of sending emails. It is more to say that
+the implementation of sending emails is very application specific. For example, the simple example above might be sufficient
+for some small applications but not so much for more mission critial applications. Runtime errors, network errors and errors
+from the service provider all need to be considerred and handled, maybe differently as well. Whether to retry, how many times
+you want to retry, what to do when everything fails, these questions all have different answers in different context.
+
 ## Phoenix integration
 
 If you are looking to use Swoosh in your Phoenix project, make sure to check out the
