@@ -25,9 +25,15 @@ defmodule Swoosh.Mailer do
   Most of the configuration that goes into the config is specific to the adapter,
   so check the adapter's documentation for more information.
 
-  Note that the configuration is set into your mailer at compile time. If you
-  need to reference config at runtime you can use a tuple like
-  `{:system, "ENV_VAR"}`.
+  Per module configuration is also supported, it has priority over mix configs:
+
+      defmodule Sample.Mailer do
+        use Swoosh.Mailer, otp_app: :sample,
+          adapter: Swoosh.Adapters.Sendgrid,
+          api_key: "SG.x.x"
+      end
+
+  System environment variables can be specified with `{:system, "ENV_VAR_NAME"}`:
 
       config :sample, Sample.Mailer,
         adapter: Swoosh.Adapters.SMTP,
@@ -60,15 +66,15 @@ defmodule Swoosh.Mailer do
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      {otp_app, adapter, config} = Swoosh.Mailer.parse_config(__MODULE__, opts)
+      alias Swoosh.Mailer
 
-      @adapter adapter
-      @config config
+      @otp_app Keyword.fetch!(opts, :otp_app)
+      @mailer_config opts
 
       def deliver(email, config \\ [])
       def deliver(email, config) do
-        config = Keyword.merge(@config, config)
-        Swoosh.Mailer.deliver(Keyword.get(config, :adapter, @adapter), email, config)
+        config = Mailer.parse_config(@otp_app, __MODULE__, @mailer_config, config)
+        Mailer.deliver(email, config)
       end
 
       def deliver!(email, config \\ [])
@@ -82,42 +88,42 @@ defmodule Swoosh.Mailer do
     end
   end
 
-  def deliver(_adapter, %Swoosh.Email{from: nil}, _config) do
+  def deliver(%Swoosh.Email{from: nil}, _config) do
     {:error, :from_not_set}
   end
-  def deliver(_adapter, %Swoosh.Email{from: {_name, address}}, _config) when address in ["", nil] do
+  def deliver(%Swoosh.Email{from: {_name, address}}, _config)
+      when address in ["", nil] do
     {:error, :from_not_set}
   end
-  def deliver(adapter, %Swoosh.Email{} = email, config) do
-    config = Swoosh.Mailer.parse_runtime_config(config)
+  def deliver(%Swoosh.Email{} = email, config) do
+    adapter = Keyword.fetch!(config, :adapter)
 
     :ok = adapter.validate_config(config)
     adapter.deliver(email, config)
   end
 
   @doc """
-  Parses the OTP configuration at compile time.
+  Parse configs in the following order, later ones taking priority:
+
+  1. mix configs
+  2. compiled configs in Mailer module
+  3. dynamic configs passed into the function
+  4. system envs
   """
-  def parse_config(mailer, opts) do
-    otp_app = Keyword.fetch!(opts, :otp_app)
-    config = Application.get_env(otp_app, mailer, [])
-    adapter = opts[:adapter] || config[:adapter]
-
-    unless adapter do
-      raise ArgumentError, "missing :adapter configuration in " <>
-                           "config #{inspect otp_app}, #{inspect mailer}"
-    end
-
-    {otp_app, adapter, config}
+  def parse_config(otp_app, mailer, mailer_config, dynamic_config) do
+    Application.get_env(otp_app, mailer, [])
+    |> Keyword.merge(mailer_config)
+    |> Keyword.merge(dynamic_config)
+    |> Swoosh.Mailer.interpolate_env_vars
   end
 
   @doc """
-  Parses the OTP configuration at run time.
+  Interpolate system environment variables in the configuration.
 
   This function will transform all the {:system, "ENV_VAR"} tuples into their
   respective values grabbed from the process environment.
   """
-  def parse_runtime_config(config) do
+  def interpolate_env_vars(config) do
     Enum.map config, fn
       {key, {:system, env_var}} -> {key, System.get_env(env_var)}
       {key, value} -> {key, value}
