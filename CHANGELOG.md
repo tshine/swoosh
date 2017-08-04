@@ -9,6 +9,8 @@
   * to take advantage of ExUnit colored diffs
 * Swoosh no longer reads config at compile time. ([#146](https://github.com/swoosh/swoosh/pull/146))
 * Require `Elixir ~> 1.4` so that we can take advantage of all the OTP20 features.
+* Bump [plug](https://github.com/elixir-lang/plug) to 1.4.3.
+* Bump [hackney](https://github.com/benoitc/hackney) to 1.9.0.
 
 ## v0.8.1 - 2017-06-10
 
