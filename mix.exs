@@ -41,7 +41,7 @@ defmodule Swoosh.Mixfile do
      {:plug, "~> 1.4", optional: true},
      {:credo, "~> 0.8", only: [:dev, :test]},
      {:bypass, "~> 0.6", only: :test},
-     {:ex_doc, "~> 0.15", only: :docs},
+     {:ex_doc, "~> 0.16", only: :docs},
      {:inch_ex, ">= 0.0.0", only: :docs}]
   end
 
