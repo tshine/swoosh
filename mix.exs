@@ -33,7 +33,7 @@ defmodule Swoosh.Mixfile do
   defp elixirc_paths(_),     do: ["lib"]
 
   defp deps do
-    [{:hackney, "~> 1.6"},
+    [{:hackney, "~> 1.9"},
      {:mime, "~> 1.1"},
      {:poison, "~> 1.5 or ~> 2.0 or ~> 3.0"},
      {:gen_smtp, "~> 0.11", optional: true},
