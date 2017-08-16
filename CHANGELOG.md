@@ -1,5 +1,10 @@
 ## Changelog
 
+## v0.9.1 - 2017-08-16
+
+### Fixed
+* Quote name portion of recipient in Mailgun adapter. ([#150](https://github.com/swoosh/swoosh/pull/150)) 
+
 ## v0.9.0 - 2017-08-04
 
 ### Changed
