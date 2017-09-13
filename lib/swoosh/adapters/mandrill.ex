@@ -64,6 +64,7 @@ defmodule Swoosh.Adapters.Mandrill do
     |> prepare_bcc(email)
     |> prepare_attachments(email)
     |> prepare_reply_to(email)
+    |> prepare_custom_headers(email)
   end
 
   defp set_api_key(body, config), do: Map.put(body, :key, config[:api_key])
@@ -119,4 +120,10 @@ defmodule Swoosh.Adapters.Mandrill do
 
   defp prepare_html(body, %{html_body: nil}), do: body
   defp prepare_html(body, %{html_body: html_body}), do: Map.put(body, :html, html_body)
+
+  defp prepare_custom_headers(body, %{headers: headers}) when map_size(headers) == 0, do: body
+  defp prepare_custom_headers(body, %{headers: headers}) do
+    custom_headers =  Map.merge(body[:headers] || %{}, headers)
+    Map.put(body, :headers, custom_headers)
+  end
 end
