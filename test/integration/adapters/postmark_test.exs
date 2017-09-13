@@ -6,14 +6,14 @@ defmodule Swoosh.Integration.Adapters.PostmarkTest do
   @moduletag integration: true
 
   setup_all do
-    config = [api_key: System.get_env("POSTMARK_API_KEY"), domain: System.get_env("POSTMARK_DOMAIN")]
+    config = [api_key: System.get_env("POSTMARK_API_KEY"), from: System.get_env("POSTMARK_FROM"), to: System.get_env("POSTMARK_TO")]
     valid_email =
       new()
-      |> from({"Swoosh Postmark", "swoosh@#{config[:domain]}"})
-      |> reply_to("swoosh+replyto@#{config[:domain]}")
-      |> to("swoosh+to@#{config[:domain]}")
-      |> cc("swoosh+cc@#{config[:domain]}")
-      |> bcc("swoosh+bcc@#{config[:domain]}")
+      |> from({"Swoosh Postmark", config[:from]})
+      |> reply_to(config[:from])
+      |> to(config[:to])
+      |> cc(config[:to])
+      |> bcc(config[:to])
 
     {:ok, valid_email: valid_email, config: config}
   end
