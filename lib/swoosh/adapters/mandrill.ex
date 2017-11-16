@@ -2,6 +2,10 @@ defmodule Swoosh.Adapters.Mandrill do
   @moduledoc ~S"""
   An adapter that sends email using the Mandrill API.
 
+  It supports both the `send` and `send-template` endpoint. In order to use the
+  latter you need to set `template_name` in the `provider_options` map on
+  `Swoosh.Email`.
+
   For reference: [Mandrill API docs](https://mandrillapp.com/api/docs/messages.html)
 
   ## Example
@@ -15,6 +19,17 @@ defmodule Swoosh.Adapters.Mandrill do
       defmodule Sample.Mailer do
         use Swoosh.Mailer, otp_app: :sample
       end
+
+  ## Example of using the `send-template` endpoint
+
+      import Swoosh.Email
+
+      new()
+      |> from({"T Stark", "tony.stark@example.com"})
+      |> to({"Steve Rogers", "steve.rogers@example.com"})
+      |> subject("Hello, Avengers!")
+      |> put_provider_option(:template_name, "welcome")
+      |> put_provider_option(:template_content, [%{"name" => "START_DATE", "content" => "Next Monday"}])
   """
 
   use Swoosh.Adapter, required_config: [:api_key]
