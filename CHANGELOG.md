@@ -1,6 +1,6 @@
 ## Changelog
 
-## DEV
+## v0.12.0 - 2017-12-13
 
 ### Added
 
@@ -12,6 +12,7 @@
 
 * Dialyzer warnings ([#180](https://github.com/swoosh/swoosh/pull/180) thanks! @xadhoom)
 * Alternative multipart email with attachment shows both text and html content ([#184](https://github.com/swoosh/swoosh/pull/184) thanks again! @xadhoom)
+* Fix warning in Amazon SES adapter when `mimemail` dependency is not loaded. ([#187](https://github.com/swoosh/swoosh/pull/184))
 
 ## v0.11.0 - 2017-11-01
 
