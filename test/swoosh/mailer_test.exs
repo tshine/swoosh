@@ -33,11 +33,29 @@ defmodule Swoosh.MailerTest do
 
   test "dynamic adapter", %{valid_email: email} do
     defmodule OtherAdapterMailer do
-      # sending with NotExistAdapter would raise
-      use Swoosh.Mailer, otp_app: :swoosh, adapter: NotExistAdapter
+      # Adapter not specified
+      use Swoosh.Mailer, otp_app: :swoosh
     end
 
     assert {:ok, _} = OtherAdapterMailer.deliver(email, adapter: FakeAdapter)
+  end
+
+  if Version.match?(System.version(), "~> 1.5") do
+    # TODO: Remove version guard when dropping Elixir 1.4 support
+    # Elixir < 1.5 raises an unexpected error when on_load fails
+    test "raise if mailer defined with nonexistent adapter", %{valid_email: email} do
+      import ExUnit.CaptureLog
+
+      assert capture_log(fn ->
+        defmodule WontWorkAdapterMailer do
+          use Swoosh.Mailer, otp_app: :swoosh, adapter: NotExistAdapter
+        end
+      end) =~ ~r/Elixir.NotExistAdapter does not exist/
+
+      assert_raise UndefinedFunctionError, fn ->
+        WontWorkAdapterMailer.deliver(email)
+      end
+    end
   end
 
   test "should raise if deliver!/2 is called with invalid from", %{valid_email: valid_email} do

@@ -75,8 +75,7 @@ defmodule Swoosh.Mailer do
       def deliver(email, config \\ [])
 
       def deliver(email, config) do
-        config = Mailer.parse_config(@otp_app, __MODULE__, @mailer_config, config)
-        Mailer.deliver(email, config)
+        Mailer.deliver(email, parse_config(config))
       end
 
       @spec deliver!(Swoosh.Email.t(), Keyword.t()) :: term | no_return
@@ -87,6 +86,18 @@ defmodule Swoosh.Mailer do
           {:ok, result} -> result
           {:error, reason} -> raise DeliveryError, reason: reason
         end
+      end
+
+      @on_load :validate_dependency
+
+      @doc false
+      def validate_dependency do
+        adapter = Keyword.get(parse_config([]), :adapter)
+        Mailer.validate_dependency(adapter)
+      end
+
+      defp parse_config(config) do
+        Mailer.parse_config(@otp_app, __MODULE__, @mailer_config, config)
       end
     end
   end
@@ -133,5 +144,44 @@ defmodule Swoosh.Mailer do
       {key, {:system, env_var}} -> {key, System.get_env(env_var)}
       {key, value} -> {key, value}
     end)
+  end
+
+  @doc false
+  def validate_dependency(adapter) do
+    require Logger
+
+    with adapter when not is_nil(adapter) <- adapter,
+         {:module, _} <- Code.ensure_loaded(adapter),
+         true <- function_exported?(adapter, :validate_dependency, 0),
+         :ok <- adapter.validate_dependency() do
+      :ok
+    else
+      no_match when no_match in [nil, false] ->
+        :ok
+
+      {:error, :nofile} ->
+        Logger.error("#{adapter} does not exist")
+        :abort
+
+      {:error, deps} when is_list(deps) ->
+        Logger.error(Swoosh.Mailer.missing_deps_message(adapter, deps))
+        :abort
+    end
+  end
+
+  @doc false
+  def missing_deps_message(adapter, deps) do
+    deps =
+      deps
+      |> Enum.map(fn
+        {lib, module} -> "#{module} from #{inspect(lib)}"
+        {module} -> inspect(module)
+      end)
+      |> Enum.map(&"\n- #{&1}")
+
+    """
+    The following dependencies are required to use #{inspect(adapter)}:
+    #{deps}
+    """
   end
 end
