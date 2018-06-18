@@ -39,6 +39,14 @@ if Code.ensure_loaded?(Plug) do
     plug :match
     plug :dispatch
 
+    post "/clear" do
+      conn.assigns.storage_driver.delete_all()
+
+      conn
+      |> put_resp_header("location", "/")
+      |> send_resp(302, '')
+    end
+
     get "/" do
       emails = conn.assigns.storage_driver.all()
       conn
