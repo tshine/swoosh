@@ -103,11 +103,33 @@ defmodule Swoosh.Adapters.AmazonSES do
     |> Map.put("Action", @action)
     |> Map.put("Version", Keyword.get(config, :version, @version))
     |> Map.put("RawMessage.Data", generate_raw_message_data(email, config))
+    |> prepare_configuration_set_name(email)
+    |> prepare_tags(email)
   end
 
   defp encode_body(body) do
     body |> Enum.sort() |> URI.encode_query()
   end
+
+  defp prepare_configuration_set_name(body, %{provider_options: %{configuration_set_name: name}}) do
+    Map.put(body, "ConfigurationSetName", name)
+  end
+
+  defp prepare_configuration_set_name(body, _email), do: body
+
+  defp prepare_tags(body, %{provider_options: %{tags: tags}}) do
+    Map.merge(
+      body,
+      tags
+      |> Enum.with_index(1)
+      |> Enum.flat_map(fn {%{name: name, value: value}, index} ->
+        [{"Tags.member.#{index}.Name", name}, {"Tags.member.#{index}.Value", value}]
+      end)
+      |> Enum.into(%{})
+    )
+  end
+
+  defp prepare_tags(body, _email), do: body
 
   defp generate_raw_message_data(email, config) do
     email
