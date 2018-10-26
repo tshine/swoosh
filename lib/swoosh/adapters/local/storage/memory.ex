@@ -119,6 +119,13 @@ defmodule Swoosh.Adapters.Local.Storage.Memory do
   def handle_call({:push, email}, _from, emails) do
     id = :crypto.strong_rand_bytes(16) |> Base.encode16() |> String.downcase()
     email = email |> Swoosh.Email.header("Message-ID", id)
+
+    attachments_with_data =
+      Enum.map(email.attachments, fn attachment -> 
+        %{attachment | data: Swoosh.Attachment.get_content(attachment)}
+      end)
+    
+    email = %{email | attachments: attachments_with_data}
     {:reply, email, [email | emails]}
   end
 
