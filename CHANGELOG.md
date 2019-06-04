@@ -1,5 +1,11 @@
 ## Changelog
 
+## v0.23.2 - 2019-06-04
+
+### Added
+
+- Link to Mailjet in README
+
 ## v0.23.1 - 2019-03-22
 
 ### Added
