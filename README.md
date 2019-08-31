@@ -228,10 +228,10 @@ For email to reach this mailbox you will need to set your `Mailer` adapter to `S
 config :sample, Mailer,
   adapter: Swoosh.Adapters.Local
 
-# to change the preview server port (4000 by default)
-config :swoosh, preview_port: 4001
+# to run the preview server together as part of your app
+config :swoosh, serve_mailbox: true
 
-# to run the preview server together as part of your phoenix app
+# to change the preview server port (4000 by default)
 config :swoosh, serve_mailbox: true, preview_port: 4001
 ```
 
@@ -257,6 +257,16 @@ $ mix swoosh.mailbox.server
 If you are curious, this is how it looks:
 
 ![Plug.Swoosh.MailboxPreview](https://github.com/swoosh/swoosh/raw/master/images/mailbox-preview.png)
+
+### Production
+
+Swoosh starts a memory storage process for local adapter by default. Normally it does no harm being left around in production.
+However, if it is causing problems, or you don't like having it around, it can be disabled like so:
+
+```elixir
+# config/prod.exs
+config :swoosh, local: false
+```
 
 ## Documentation
 
