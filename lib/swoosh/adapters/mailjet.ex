@@ -79,7 +79,7 @@ defmodule Swoosh.Adapters.Mailjet do
     |> prepare_reply_to(email)
     |> prepare_attachments(email)
     |> prepare_variables(email)
-    |> prepare_template_id(email)
+    |> prepare_template(email)
     |> prepare_custom_headers(email)
     |> wrap_into_messages
     |> Swoosh.json_library.encode!()
@@ -139,11 +139,24 @@ defmodule Swoosh.Adapters.Mailjet do
 
   defp prepare_variables(body, _email), do: body
 
-  defp prepare_template_id(body, %{provider_options: %{template_id: template_id}}) do
-    body
-    |> Map.put("TemplateID", template_id)
-    |> Map.put("TemplateLanguage", true)
+  defp prepare_template(body, %{provider_options: %{template_id: template_id} = provider_options}) do
+    body =
+      body
+      |> Map.put("TemplateID", template_id)
+      |> Map.put("TemplateLanguage", true)
+      |> Map.put("TemplateErrorDeliver", !!provider_options[:template_error_deliver])
+
+    case provider_options[:template_error_reporting] do
+      nil ->
+        body
+      {name, email} when is_binary(name) and is_binary(email) ->
+        Map.put(body, "TemplateErrorReporting", %{"Email" => email, "Name" => name})
+      email when is_binary(email) ->
+        Map.put(body, "TemplateErrorReporting", %{"Email" => email, "Name" => ""})
+      map when is_map(map) ->
+        Map.put(body, "TemplateErrorReporting", map)
+    end
   end
 
-  defp prepare_template_id(body, _email), do: body
+  defp prepare_template(body, _email), do: body
 end
