@@ -48,11 +48,16 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "assert email sent with specific params" do
-    assert_email_sent(subject: "Hello, Avengers!", to: "steve.rogers@example.com")
+    assert_email_sent(
+      subject: "Hello, Avengers!",
+      to: "steve.rogers@example.com"
+    )
   end
 
   test "assert email sent with specific to (list)" do
-    assert_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
+    assert_email_sent(
+      to: ["steve.rogers@example.com", "bruce.banner@example.com"]
+    )
   end
 
   test "assert email sent with wrong subject" do
@@ -95,13 +100,14 @@ defmodule Swoosh.TestAssertionsTest do
     wrong_email = new() |> subject("Wrong, Avengers!")
 
     message =
-      String.trim("""
+      """
       No message matching {:email, ^email} after 0ms.
       The following variables were pinned:
         email = #{inspect(wrong_email)}
       Process mailbox:
         {:email, #{inspect(email)}}
-      """)
+      """
+      |> String.trim()
 
     try do
       assert_email_sent(wrong_email)
@@ -186,7 +192,10 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "refute email sent with specific params" do
-    refute_email_sent(subject: "Good bye, Avengers!", to: "steve.rogers@example.com")
+    refute_email_sent(
+      subject: "Good bye, Avengers!",
+      to: "steve.rogers@example.com"
+    )
   end
 
   test "refute email sent with expected params" do
@@ -227,7 +236,9 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "refute email sent with expected to" do
-    assert_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
+    assert_email_sent(
+      to: ["steve.rogers@example.com", "bruce.banner@example.com"]
+    )
 
     deliver(new(to: "steve.rogers@example.com"))
 
@@ -238,7 +249,9 @@ defmodule Swoosh.TestAssertionsTest do
 
   test "refute email sent with expected to (list)" do
     assert_raise ExUnit.AssertionError, fn ->
-      refute_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
+      refute_email_sent(
+        to: ["steve.rogers@example.com", "bruce.banner@example.com"]
+      )
     end
   end
 
@@ -251,7 +264,9 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "refute email sent with expected cc" do
-    assert_email_sent(cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"])
+    assert_email_sent(
+      cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"]
+    )
 
     deliver(new(cc: "natasha.romanoff@example.com"))
 
@@ -262,7 +277,9 @@ defmodule Swoosh.TestAssertionsTest do
 
   test "refute email sent with expected cc (list)" do
     assert_raise ExUnit.AssertionError, fn ->
-      refute_email_sent(cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"])
+      refute_email_sent(
+        cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"]
+      )
     end
   end
 
