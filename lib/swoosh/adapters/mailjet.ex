@@ -32,30 +32,66 @@ defmodule Swoosh.Adapters.Mailjet do
   @api_endpoint "send"
 
   def deliver(%Email{} = email, config \\ []) do
+    send_request(prepare_body(email), config)
+  end
+
+  def deliver_many(emails, config \\ []) when is_list(emails) do
+    send_request(prepare_body(emails), config)
+  end
+
+  defp send_request(body, config) do
     headers = prepare_headers(config)
     url = [base_url(config), "/", @api_endpoint]
 
-    case :hackney.post(url, headers, prepare_body(email), [:with_body]) do
+    case :hackney.post(url, headers, body, [:with_body]) do
       {:ok, 200, _headers, body} ->
-        {:ok, %{id: get_message_id(body)}}
+        {:ok, parse_results(body)}
 
       {:ok, error_code, _headers, body} when error_code >= 400 ->
-        {:error, {error_code, Swoosh.json_library().decode!(body)}}
+        {:error, {error_code, parse_results(body)}}
 
       {:error, reason} ->
         {:error, reason}
     end
   end
 
-  # MessageHref: https://api.mailjet.com/v3/REST/message/#{message_id}
-  defp get_message_id(%{
-         "Messages" => [%{"To" => [%{"MessageID" => message_id}]}]
-       }) do
-    message_id
+  defp parse_results(%{"Messages" => results}) do
+    results =
+      Enum.map(results, fn
+        %{"Status" => "success"} = result -> get_message_id(result)
+        per_message_error -> per_message_error
+      end)
+
+    case results do
+      [single] -> single
+      multiple -> multiple
+    end
   end
 
-  defp get_message_id(%{"Messages" => [%{"To" => messages}]}) do
-    Enum.map(messages, fn %{"MessageID" => message_id} -> message_id end)
+  defp parse_results(body) when is_binary(body) do
+    body
+    |> Swoosh.json_library().decode!
+    |> parse_results()
+  end
+
+  defp parse_results(global_error) do
+    global_error
+  end
+
+  defp get_message_id(%{"To" => [%{"MessageID" => message_id}]}) do
+    %{id: message_id}
+  end
+
+  defp get_message_id(%{"To" => multiple_receivers}) do
+    %{
+      id:
+        Enum.map(
+          multiple_receivers,
+          fn %{"MessageID" => message_id} ->
+            message_id
+          end
+        )
+    }
   end
 
   defp get_message_id(body) when is_binary(body) do
@@ -76,7 +112,15 @@ defmodule Swoosh.Adapters.Mailjet do
 
   defp auth(config), do: Base.encode64("#{config[:api_key]}:#{config[:secret]}")
 
-  defp prepare_body(email) do
+  defp prepare_body(emails) do
+    emails
+    |> List.wrap()
+    |> Enum.map(&prepare_message/1)
+    |> wrap_messages()
+    |> Swoosh.json_library().encode!()
+  end
+
+  defp prepare_message(email) do
     %{}
     |> prepare_from(email)
     |> prepare_to(email)
@@ -91,11 +135,9 @@ defmodule Swoosh.Adapters.Mailjet do
     |> prepare_template(email)
     |> prepare_custom_headers(email)
     |> prepare_custom_id(email)
-    |> wrap_into_messages
-    |> Swoosh.json_library().encode!()
   end
 
-  defp wrap_into_messages(body), do: %{Messages: [body]}
+  defp wrap_messages(body) when is_list(body), do: %{Messages: body}
 
   defp prepare_custom_id(body, %{provider_options: %{custom_id: custom_id}}),
     do: Map.put(body, "CustomID", custom_id)

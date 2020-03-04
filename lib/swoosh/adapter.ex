@@ -27,12 +27,18 @@ defmodule Swoosh.Adapter do
   @doc """
   Delivers an email with the given config.
   """
-  @callback deliver(email, config) :: {:ok, term} | {:error, term}
+  @callback deliver(%Swoosh.Email{}, config) :: {:ok, term} | {:error, term}
+
+  @doc """
+  Delivers multiple emails with the given config
+  """
+  @callback deliver_many(list(%Swoosh.Email{}), config) ::
+              {:ok, term} | {:error, term}
 
   @callback validate_config(config) :: :ok | no_return
   @callback validate_dependency() :: :ok | [module | {atom, module}]
 
-  @optional_callbacks validate_dependency: 0
+  @optional_callbacks validate_dependency: 0, deliver_many: 2
 
   @spec validate_config([atom], Keyword.t()) :: :ok | no_return
   def validate_config(required_config, config) do
