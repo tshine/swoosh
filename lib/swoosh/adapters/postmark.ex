@@ -54,6 +54,7 @@ defmodule Swoosh.Adapters.Postmark do
   @base_url "https://api.postmarkapp.com"
   @api_endpoint "/email"
 
+  @impl true
   def deliver(%Email{} = email, config \\ []) do
     headers = prepare_headers(config)
     params = email |> prepare_body |> Swoosh.json_library().encode!
@@ -64,7 +65,10 @@ defmodule Swoosh.Adapters.Postmark do
         {:ok, %{id: Swoosh.json_library().decode!(body)["MessageID"]}}
 
       {:ok, code, _headers, body} when code > 399 ->
-        {:error, {code, Swoosh.json_library().decode!(body)}}
+        case Swoosh.json_library().decode(body) do
+          {:ok, error} -> {:error, {code, error}}
+          {:error, _} -> {:error, {code, body}}
+        end
 
       {:error, reason} ->
         {:error, reason}

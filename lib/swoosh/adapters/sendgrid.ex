@@ -31,6 +31,7 @@ defmodule Swoosh.Adapters.Sendgrid do
   @base_url "https://api.sendgrid.com/v3"
   @api_endpoint "/mail/send"
 
+  @impl true
   def deliver(%Email{} = email, config \\ []) do
     headers = [
       {"Content-Type", "application/json"},
@@ -45,11 +46,11 @@ defmodule Swoosh.Adapters.Sendgrid do
       {:ok, code, headers, _body} when code >= 200 and code <= 399 ->
         {:ok, %{id: extract_id(headers)}}
 
-      {:ok, code, _headers, body} when code >= 400 and code <= 499 ->
-        {:error, {code, Swoosh.json_library().decode!(body)}}
-
-      {:ok, code, _headers, body} when code >= 500 ->
-        {:error, {code, body}}
+      {:ok, code, _headers, body} when code >= 400 ->
+        case Swoosh.json_library().decode(body) do
+          {:ok, error} -> {:error, {code, error}}
+          {:error, _} -> {:error, {code, body}}
+        end
 
       {:error, reason} ->
         {:error, reason}

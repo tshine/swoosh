@@ -37,6 +37,7 @@ defmodule Swoosh.Adapters.Mailgun do
   @base_url "https://api.mailgun.net/v3"
   @api_endpoint "/messages"
 
+  @impl true
   def deliver(%Email{} = email, config \\ []) do
     headers = prepare_headers(email, config)
     url = [base_url(config), "/", config[:domain], @api_endpoint]
@@ -45,14 +46,11 @@ defmodule Swoosh.Adapters.Mailgun do
       {:ok, 200, _headers, body} ->
         {:ok, %{id: Swoosh.json_library().decode!(body)["id"]}}
 
-      {:ok, 401, _headers, body} ->
-        {:error, {401, body}}
-
-      {:ok, code, _headers, ""} when code > 399 ->
-        {:error, {code, ""}}
-
       {:ok, code, _headers, body} when code > 399 ->
-        {:error, {code, Swoosh.json_library().decode!(body)}}
+        case Swoosh.json_library().decode(body) do
+          {:ok, error} -> {:error, {code, error}}
+          {:error, _} -> {:error, {code, body}}
+        end
 
       {:error, reason} ->
         {:error, reason}

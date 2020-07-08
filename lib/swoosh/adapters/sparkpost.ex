@@ -57,6 +57,7 @@ defmodule Swoosh.Adapters.SparkPost do
 
   @endpoint "https://api.sparkpost.com/api/v1"
 
+  @impl true
   def deliver(%Email{} = email, config \\ []) do
     headers = prepare_headers(email, config)
     body = email |> prepare_body |> Swoosh.json_library().encode!
@@ -67,7 +68,10 @@ defmodule Swoosh.Adapters.SparkPost do
         {:ok, Swoosh.json_library().decode!(body)}
 
       {:ok, code, _headers, body} when code > 399 ->
-        {:error, {code, Swoosh.json_library().decode!(body)}}
+        case Swoosh.json_library().decode(body) do
+          {:ok, error} -> {:error, {code, error}}
+          {:error, _} -> {:error, {code, body}}
+        end
 
       {:error, reason} ->
         {:error, reason}

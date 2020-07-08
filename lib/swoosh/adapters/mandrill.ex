@@ -41,6 +41,7 @@ defmodule Swoosh.Adapters.Mandrill do
   @template_api_endpoint "/messages/send-template.json"
   @headers [{"Content-Type", "application/json"}]
 
+  @impl true
   def deliver(%Email{} = email, config \\ []) do
     body = email |> prepare_body(config) |> Swoosh.json_library().encode!
     url = [base_url(config), api_endpoint(email)]
@@ -50,7 +51,10 @@ defmodule Swoosh.Adapters.Mandrill do
         parse_response(body)
 
       {:ok, code, _headers, body} when code > 399 ->
-        {:error, {code, Swoosh.json_library().decode!(body)}}
+        case Swoosh.json_library().decode(body) do
+          {:ok, error} -> {:error, {code, error}}
+          {:error, _} -> {:error, {code, body}}
+        end
 
       {:error, reason} ->
         {:error, reason}
