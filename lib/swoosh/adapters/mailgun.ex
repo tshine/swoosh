@@ -23,10 +23,15 @@ defmodule Swoosh.Adapters.Mailgun do
 
   ## Provider options
 
-  - :template_name
-  - :custom_vars
-  - :recipient_vars
-  - :tags
+  - `:custom_vars` (v:)
+  - `:sending_options` (o:)
+  - `:template_name` (template)
+  - `:recipient_vars` (recipient-variables)
+  - `:tags` (o:tag, added before `:sending_options`)
+  
+  ## Custom headers
+  
+  Headers added via `Email.header/3` will be translated to (h:) values that Mailgun recognizes.
   """
 
   use Swoosh.Adapter, required_config: [:api_key, :domain], required_deps: [plug: Plug.Conn.Query]
@@ -84,6 +89,7 @@ defmodule Swoosh.Adapters.Mailgun do
     |> prepare_reply_to(email)
     |> prepare_attachments(email)
     |> prepare_custom_vars(email)
+    |> prepare_sending_options(email)
     |> prepare_recipient_vars(email)
     |> prepare_tags(email)
     |> prepare_custom_headers(email)
@@ -102,6 +108,14 @@ defmodule Swoosh.Adapters.Mailgun do
   end
 
   defp prepare_custom_vars(body, _email), do: body
+
+  defp prepare_sending_options(body, %{provider_options: %{sending_options: sending_options}}) do
+    Enum.reduce(sending_options, body, fn {k, v}, body ->
+      Map.put(body, "o:#{k}", encode_variable(v))
+    end)
+  end
+
+  defp prepare_sending_options(body, _email), do: body
 
   defp prepare_recipient_vars(body, %{provider_options: %{recipient_vars: recipient_vars}}) do
     Map.put(body, "recipient-variables", encode_variable(recipient_vars))
