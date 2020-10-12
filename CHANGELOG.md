@@ -1,5 +1,12 @@
 ## Changelog
 
+## 1.0.6
+
+### ✨ Features
+
+- Postmark: Add support for new broadcast email stream option @zorn (#533)
+- Mailjet: short circuit deliver_many to prevent error when delivering 0 emails @Adzz (#532)
+
 ## 1.0.5
 
 ### Changes
