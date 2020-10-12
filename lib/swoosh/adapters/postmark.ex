@@ -128,7 +128,7 @@ defmodule Swoosh.Adapters.Postmark do
   end
 
   defp api_endpoint(email, batch \\ false) do
-    case {email_uses_template?(%Email{} = email), batch} do
+    case {email_uses_template?(email), batch} do
       {true, true} -> "/email/batchWithTemplates"
       {true, false} -> "/email/withTemplate"
       {false, true} -> "/email/batch"
@@ -170,6 +170,7 @@ defmodule Swoosh.Adapters.Postmark do
   end
 
   defp prepare_from(body, %{from: from}), do: Map.put(body, "From", render_recipient(from))
+
   defp prepare_to(body, %{to: to}), do: Map.put(body, "To", render_recipient(to))
 
   defp prepare_cc(body, %{cc: []}), do: body
@@ -254,5 +255,4 @@ defmodule Swoosh.Adapters.Postmark do
     do: Map.put(body, "MessageStream", value)
 
   defp prepare_message_stream(body, _), do: body
-
 end

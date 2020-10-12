@@ -21,7 +21,7 @@ defmodule Swoosh.ApiClient do
   @doc """
   Callback invoked when posting to a given URL.
   """
-  @callback post(url, headers, body, Swoosh.Email.t) ::
+  @callback post(url, headers, body, Swoosh.Email.t()) ::
               {:ok, status, headers, body} | {:error, term()}
 
   @optional_callbacks init: 0
@@ -62,7 +62,7 @@ defmodule Swoosh.ApiClient.Hackney do
   @impl true
   def init do
     unless Code.ensure_loaded?(:hackney) do
-      Logger.error """
+      Logger.error("""
       Could not find hackney dependency.
 
       Please add :hackney to your dependencies:
@@ -72,7 +72,7 @@ defmodule Swoosh.ApiClient.Hackney do
       Or set your own Swoosh.ApiClient:
 
           config :swoosh, :api_client, MyAPIClient
-      """
+      """)
 
       raise "missing hackney dependency"
     end
