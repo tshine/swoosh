@@ -31,7 +31,7 @@ defmodule Swoosh.Mixfile do
         extras: [
           "CHANGELOG.md",
           "CODE_OF_CONDUCT.md",
-          "CONTRIBUTING.md",
+          "CONTRIBUTING.md"
         ]
       ],
 
@@ -73,7 +73,6 @@ defmodule Swoosh.Mixfile do
       {:plug_cowboy, ">= 1.0.0", optional: true},
       {:bypass, "~> 1.0", only: :test},
       {:ex_doc, "~> 0.16", only: :docs, runtime: false},
-      {:inch_ex, ">= 0.0.0", only: :docs},
       {:mail, "~> 0.2", optional: true}
     ]
   end
