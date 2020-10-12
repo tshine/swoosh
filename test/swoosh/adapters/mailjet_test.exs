@@ -119,7 +119,7 @@ defmodule Swoosh.Adapters.MailjetTest do
     {:ok, bypass: bypass, valid_email: valid_email, config: config}
   end
 
-  test "delivery/1 - valid email with html and text body results in message ID",
+  test "deliver/1 - valid email with html and text body results in message ID",
        %{
          bypass: bypass,
          config: config,
@@ -164,7 +164,7 @@ defmodule Swoosh.Adapters.MailjetTest do
     assert Mailjet.deliver(email, config) == {:ok, %{id: 123_456_789}}
   end
 
-  test "delivery/1 - valid email with template ID and variables results in message ID",
+  test "deliver/1 - valid email with template ID and variables results in message ID",
        %{
          bypass: bypass,
          config: config,
@@ -223,7 +223,7 @@ defmodule Swoosh.Adapters.MailjetTest do
     assert Mailjet.deliver(email, config) == {:ok, %{id: 123_456_789}}
   end
 
-  test "delivery/1 - valid email with CustomID", %{
+  test "deliver/1 - valid email with CustomID", %{
     bypass: bypass,
     config: config,
     valid_email: email
@@ -269,7 +269,7 @@ defmodule Swoosh.Adapters.MailjetTest do
     assert Mailjet.deliver(email, config) == {:ok, %{id: 123_456_789}}
   end
 
-  test "delivery/1 - single 4xx error response from Send API", %{
+  test "deliver1/1 - single 4xx error response from Send API", %{
     bypass: bypass,
     config: config,
     valid_email: email
@@ -313,7 +313,7 @@ defmodule Swoosh.Adapters.MailjetTest do
     assert Mailjet.deliver(email, config) == {:error, {400, error_result}}
   end
 
-  test "delivery/1 - global 400 error from Send API", %{
+  test "deliver/1 - global 400 error from Send API", %{
     bypass: bypass,
     config: config,
     valid_email: email
@@ -335,14 +335,13 @@ defmodule Swoosh.Adapters.MailjetTest do
       "ErrorIdentifier" => "error id",
       "ErrorCode" => "mj-0002",
       "StatusCode" => 400,
-      "ErrorMessage" =>
-        "Malformed JSON, please review the syntax and properties types."
+      "ErrorMessage" => "Malformed JSON, please review the syntax and properties types."
     }
 
     assert Mailjet.deliver(email, config) == {:error, {400, error_result}}
   end
 
-  test "delivery/1 - sends valid auth header", %{
+  test "deliver/1 - sends valid auth header", %{
     bypass: bypass,
     config: config,
     valid_email: email
@@ -357,6 +356,10 @@ defmodule Swoosh.Adapters.MailjetTest do
     end)
 
     Mailjet.deliver(email, config)
+  end
+
+  test "deliver_many/2 when passing in an empty list short circuits" do
+    assert Mailjet.deliver_many([], []) == {:ok, []}
   end
 
   test "deliver_many/2 - two valid emails result in two message IDs",
@@ -501,10 +504,8 @@ defmodule Swoosh.Adapters.MailjetTest do
                    "Errors" => [
                      %{
                        "ErrorCode" => "mj-0013",
-                       "ErrorIdentifier" =>
-                         "2978b962-32be-4007-a96e-0388451f1b7a",
-                       "ErrorMessage" =>
-                         "\"brokenemail\" is an invalid email address.",
+                       "ErrorIdentifier" => "2978b962-32be-4007-a96e-0388451f1b7a",
+                       "ErrorMessage" => "\"brokenemail\" is an invalid email address.",
                        "ErrorRelatedTo" => ["To[0].Email"],
                        "StatusCode" => 400
                      }
