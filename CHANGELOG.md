@@ -1,5 +1,15 @@
 ## Changelog
 
+## 1.0.7
+
+### Bugfix
+
+- Fix breaking change in `gen_smtp` 1.0 @gmile (#538)
+
+### 🧰 Maintenance
+
+- Bump ex_doc from 0.22.6 to 0.23.0 @dependabot (#534)
+
 ## 1.0.6
 
 ### ✨ Features
