@@ -58,7 +58,7 @@ defimpl Swoosh.Email.Recipient, for: Any do
       |> Enum.reject(fn {_, field} -> is_nil(field) end)
       |> Enum.map(fn {var, field} ->
         unless field in keys do
-          raise "#{field} does not exist in #{struct}"
+          raise ArgumentError, "#{inspect(field)} does not exist in #{inspect(struct)}"
         end
 
         {field, {var, [generated: true], __MODULE__}}
@@ -78,22 +78,27 @@ defimpl Swoosh.Email.Recipient, for: Any do
       protocol: @protocol,
       value: data,
       description: """
-      Swoosh.Email.Recipient needs to be implemented
+      Swoosh.Email.Recipient needs to be implemented for #{inspect(data)}
+
+      Default implementations of Recipient include
+      * a string representing an email address like `foo.bar@example.com`
+      * or a two-element tuple `{name, address}`, where name and address are strings.
+        - name is allowed to be nil in this case
       """
   end
 end
 
 defimpl Swoosh.Email.Recipient, for: Tuple do
+  def format({name, address}) when name in [nil, ""] and is_binary(address) do
+    {"", address}
+  end
+
   def format({name, address}) when is_binary(name) and is_binary(address) do
     {name, address}
   end
 
-  def format({name, address}) when is_nil(name) and is_binary(address) do
-    {"", address}
-  end
-
   def format(tuple) do
-    raise """
+    raise ArgumentError, """
     Unexpected tuple format, #{inspect(tuple)} cannot be formatted into a Recipeint.
 
     The expected format is {name :: String.t() | nil, address :: String.t()}
@@ -102,7 +107,7 @@ defimpl Swoosh.Email.Recipient, for: Tuple do
 end
 
 defimpl Swoosh.Email.Recipient, for: BitString do
-  def format(address) when is_binary(address) do
+  def format(address) when is_binary(address) and address != "" do
     {"", address}
   end
 end

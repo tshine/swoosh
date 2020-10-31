@@ -39,4 +39,13 @@ defmodule Swoosh.Email.RecipientTest do
     assert Recipient.format(%Minion{banana: "baabababa@minions.org", wulala: "www"}) ==
              {"Minion www", "baabababa@minions.org"}
   end
+
+  test "raise when field not exist in struct" do
+    assert_raise ArgumentError, fn ->
+      defmodule Failed do
+        @derive {Recipient, address: :not_there}
+        defstruct [:there]
+      end
+    end
+  end
 end
