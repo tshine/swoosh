@@ -51,13 +51,18 @@ defimpl Swoosh.Email.Recipient, for: Any do
   defmacro __deriving__(module, struct, opts) do
     name_field = Keyword.get(opts, :name)
     address_field = Keyword.fetch!(opts, :address)
+    keys = Map.keys(struct)
 
     fields =
-      [
-        if(name_field, do: {name_field, {:name, [generated: true], __MODULE__}}, else: nil),
-        {address_field, {:address, [generated: true], __MODULE__}}
-      ]
-      |> Enum.reject(&is_nil/1)
+      [{:name, name_field}, {:address, address_field}]
+      |> Enum.reject(fn {_, field} -> is_nil(field) end)
+      |> Enum.map(fn {var, field} ->
+        unless field in keys do
+          raise "#{field} does not exist in #{struct}"
+        end
+
+        {field, {var, [generated: true], __MODULE__}}
+      end)
 
     quote do
       defimpl Swoosh.Email.Recipient, for: unquote(module) do
