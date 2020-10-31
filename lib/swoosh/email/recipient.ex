@@ -82,3 +82,27 @@ defimpl Swoosh.Email.Recipient, for: Any do
       """
   end
 end
+
+defimpl Swoosh.Email.Recipient, for: Tuple do
+  def format({name, address}) when is_binary(name) and is_binary(address) do
+    {name, address}
+  end
+
+  def format({name, address}) when is_nil(name) and is_binary(address) do
+    {"", address}
+  end
+
+  def format(tuple) do
+    raise """
+    Unexpected tuple format, #{inspect(tuple)} cannot be formatted into a Recipeint.
+
+    The expected format is {name :: String.t() | nil, address :: String.t()}
+    """
+  end
+end
+
+defimpl Swoosh.Email.Recipient, for: BitString do
+  def format(address) when is_binary(address) do
+    {"", address}
+  end
+end
