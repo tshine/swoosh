@@ -1,5 +1,22 @@
 ## Changelog
 
+## 1.1.0
+
+Add `Swoosh.Email.Recipient` Protocl
+
+The Recipient Protocol enables you to easily make your structs compatible
+with Swoosh functions.
+
+```elixir
+defmodule MyUser do
+  @derive {Swoosh.Email.Recipient, name: :name, address: :email}
+  defstruct [:name, :email, :other_props]
+end
+```
+
+Now you can directly pass `%MyUser{}` to `from`, `to`, `cc`, `bcc`, etc.
+See `Swoosh.Email.Recipient` for more details.
+
 ## 1.0.9
 
 Replace 1.0.8 which fell into a different bug
