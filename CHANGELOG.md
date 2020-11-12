@@ -1,5 +1,15 @@
 ## Changelog
 
+## 1.1.1
+
+### ✨ Features
+
+- Add support for arrays in mailgun custom_vars @rschef (#549)
+
+### 🧰 Maintenance
+
+- Utilize Enum.map_join/3 @tmock12 (#548)
+
 ## 1.1.0
 
 Add `Swoosh.Email.Recipient` Protocl
