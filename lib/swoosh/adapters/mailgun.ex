@@ -23,11 +23,11 @@ defmodule Swoosh.Adapters.Mailgun do
 
   ## Provider options
 
-  - `:custom_vars` (v:)
-  - `:sending_options` (o:)
+  - `:custom_vars` (used to translate to `v:`, now `h:X-Mailgun-Variables`)
+  - `:sending_options` (`o:`)
   - `:template_name` (template)
   - `:recipient_vars` (recipient-variables)
-  - `:tags` (o:tag, added before `:sending_options`)
+  - `:tags` (`o:tag`, was added in before `:sending_options`)
 
   ## Custom headers
 
@@ -97,10 +97,6 @@ defmodule Swoosh.Adapters.Mailgun do
     |> encode_body()
   end
 
-  # example custom_vars
-  #
-  # %{"my_var" => %{"my_message_id": 123},
-  #   "my_other_var" => %{"my_other_id": 1, "stuff": 2}}
   defp prepare_custom_vars(body, %{provider_options: %{custom_vars: custom_vars}}) do
     Map.put(body, "h:X-Mailgun-Variables", Swoosh.json_library().encode!(custom_vars))
   end
@@ -176,7 +172,8 @@ defmodule Swoosh.Adapters.Mailgun do
   defp prepare_html(body, %{html_body: nil}), do: body
   defp prepare_html(body, %{html_body: html_body}), do: Map.put(body, :html, html_body)
 
-  defp prepare_template(body, %{provider_options: %{template_name: template_name}}), do: Map.put(body, "template", template_name)
+  defp prepare_template(body, %{provider_options: %{template_name: template_name}}),
+    do: Map.put(body, "template", template_name)
 
   defp prepare_template(body, _), do: body
 
@@ -191,6 +188,8 @@ defmodule Swoosh.Adapters.Mailgun do
 
   defp encode_body(no_attachments), do: Plug.Conn.Query.encode(no_attachments)
 
-  defp encode_variable(var) when is_map(var) or is_list(var), do: Swoosh.json_library().encode!(var)
+  defp encode_variable(var) when is_map(var) or is_list(var),
+    do: Swoosh.json_library().encode!(var)
+
   defp encode_variable(var), do: var
 end
