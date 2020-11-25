@@ -1,5 +1,16 @@
 ## Changelog
 
+## 1.1.2
+
+### 🐛 Bug Fixes
+
+- fix gen_smtp 1.0 multipart @princemaple (#553)
+
+### 🧰 Maintenance
+
+- Bump mime from 1.4.0 to 1.5.0 @dependabot (#551)
+- Bump bypass from 1.0.0 to 2.1.0 @dependabot (#550)
+
 ## 1.1.1
 
 ### ✨ Features
