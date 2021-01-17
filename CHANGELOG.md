@@ -1,5 +1,15 @@
 ## Changelog
 
+## 1.2.0
+
+### ✨ Features
+
+- Add sendinblue adapter @tofran (#559)
+
+### 🧰 Maintenance
+
+- Bump hackney from 1.16.0 to 1.17.0 @dependabot (#557)
+
 ## 1.1.2
 
 ### 🐛 Bug Fixes
