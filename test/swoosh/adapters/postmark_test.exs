@@ -46,7 +46,7 @@ defmodule Swoosh.Adapters.PostmarkTest do
     assert Postmark.deliver(email, config) == {:ok, %{id: "b7bc2f4a-e38e-4336-af7d-e6c392c2f817"}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -82,7 +82,7 @@ defmodule Swoosh.Adapters.PostmarkTest do
     assert Postmark.deliver(email, config) == {:ok, %{id: "b7bc2f4a-e38e-4336-af7d-e6c392c2f817"}}
   end
 
-  test "delivery/1 with all fields for template id returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields for template id returns :ok", %{bypass: bypass, config: config} do
     template_model = %{
       name:    "Tony Stark",
       company: "Avengers",
@@ -116,7 +116,7 @@ defmodule Swoosh.Adapters.PostmarkTest do
     assert Postmark.deliver(email, config) == {:ok, %{id: "b7bc2f4a-e38e-4336-af7d-e6c392c2f817"}}
   end
 
-  test "delivery/1 with all fields for template alias returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields for template alias returns :ok", %{bypass: bypass, config: config} do
     template_model = %{
       name:    "Tony Stark",
       company: "Avengers",
@@ -150,7 +150,7 @@ defmodule Swoosh.Adapters.PostmarkTest do
     assert Postmark.deliver(email, config) == {:ok, %{id: "b7bc2f4a-e38e-4336-af7d-e6c392c2f817"}}
   end
 
-  test "delivery/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -178,7 +178,7 @@ defmodule Swoosh.Adapters.PostmarkTest do
     assert Postmark.deliver(email, config) == {:ok, %{id: "b7bc2f4a-e38e-4336-af7d-e6c392c2f817"}}
   end
 
-  test "delivery/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
     errors = "{\"errors\":[\"The provided authorization grant is invalid, expired, or revoked\"], \"message\":\"error\"}"
 
     Bypass.expect(bypass, &Plug.Conn.resp(&1, 422, errors))

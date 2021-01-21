@@ -59,7 +59,7 @@ defmodule Swoosh.Adapters.GmailTest do
              {:ok, %{id: "234jkasdfl", thread_id: "12312adfsx", labels: ["SENT"]}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{
+  test "deliver/1 with all fields returns :ok", %{
     bypass: bypass,
     config: config
   } do

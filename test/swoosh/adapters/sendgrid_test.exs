@@ -93,7 +93,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -128,7 +128,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with custom variables returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom variables returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -165,7 +165,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with template_id returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with template_id returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -194,7 +194,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with substitutions returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with substitutions returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -223,7 +223,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with dynamic_template_data returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with dynamic_template_data returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -252,7 +252,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -288,7 +288,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with 429 response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 429 response", %{bypass: bypass, config: config, valid_email: email} do
     errors = "{\"errors\":[{\"field\": null, \"message\": \"too many requests\"}]}"
 
     Bypass.expect(bypass, &Plug.Conn.resp(&1, 429, errors))
@@ -298,7 +298,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == response
   end
 
-  test "delivery/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
     errors = "{\"errors\":[{\"field\": \"identifier1\", \"message\": \"error message explained\"}]}"
 
     Bypass.expect(bypass, &Plug.Conn.resp(&1, 400, errors))
@@ -308,7 +308,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == response
   end
 
-  test "delivery/1 with 5xx response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 5xx response", %{bypass: bypass, config: config, valid_email: email} do
     Bypass.expect bypass, fn conn ->
       assert "/mail/send" == conn.request_path
       assert "POST" == conn.method
@@ -330,7 +330,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     end
   end
 
-  test "delivery/1 with catogories returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with catogories returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -359,7 +359,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with asm returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with asm returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -391,7 +391,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with custom personalizations returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom personalizations returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -428,7 +428,7 @@ defmodule Swoosh.Adapters.SendgridTest do
     assert Sendgrid.deliver(email, config) == {:ok, %{id: "123-xyz"}}
   end
 
-  test "delivery/1 with mail_settings returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with mail_settings returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})

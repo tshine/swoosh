@@ -107,7 +107,7 @@ defmodule Swoosh.Adapters.AmazonSESTest do
     assert AmazonSES.deliver(email, config) == {:ok, %{id: "messageId", request_id: "requestId"}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"G Threepwood", "guybrush.threepwood@pirates.grog"})

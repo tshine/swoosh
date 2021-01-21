@@ -60,7 +60,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -128,7 +128,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with api template field returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with api template field returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -169,7 +169,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with message id field returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with message id field returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -210,7 +210,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with mailing id field returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with mailing id field returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -251,7 +251,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with charset field returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with charset field returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -292,7 +292,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with headers returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with headers returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -337,7 +337,7 @@ defmodule Swoosh.Adapters.SocketLabsTest do
              {:ok, %{response_code: "Success", message_results: [], receipt: nil}}
   end
 
-  test "delivery/1 with merge data returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with merge data returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})

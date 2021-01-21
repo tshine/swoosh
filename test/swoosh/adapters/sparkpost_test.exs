@@ -63,7 +63,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
     assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -150,7 +150,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
     assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
   end
 
-  test "delivery/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -211,7 +211,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
     assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
   end
 
-  test "delivery/1 with template returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with template returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -271,7 +271,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
     assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
   end
 
-  test "delivery/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
     Bypass.expect bypass, fn conn ->
       Plug.Conn.resp(conn, 422, "{}")
     end

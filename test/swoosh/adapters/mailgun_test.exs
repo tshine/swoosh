@@ -45,7 +45,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with all fields returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from({"T Stark", "tony.stark@example.com"})
@@ -85,7 +85,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with custom variables returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom variables returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from("tony.stark@example.com")
@@ -112,7 +112,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with sending options returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with sending options returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from("tony.stark@example.com")
@@ -140,7 +140,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with recipient variables returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with recipient variables returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from("tony.stark@example.com")
@@ -167,7 +167,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with tags returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with tags returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from("tony.stark@example.com")
@@ -194,7 +194,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
+  test "deliver/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
       |> from("tony.stark@example.com")
@@ -225,7 +225,7 @@ defmodule Swoosh.Adapters.MailgunTest do
     assert Mailgun.deliver(email, config) == {:ok, %{id: "<20111114174239.25659.5817@samples.mailgun.org>"}}
   end
 
-  test "delivery/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
+  test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
     Bypass.expect bypass, fn conn ->
       Plug.Conn.resp(conn, 401, "Forbidden")
     end
