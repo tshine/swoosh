@@ -1,5 +1,16 @@
 ## Changelog
 
+## 1.2.2
+
+### ✨ Features
+
+- Sendinblue: allow using template's subject @tofran (#564)
+- Add json endpoint for mailbox preview @thiamsantos (#563)
+
+### 🐛 Bug Fixes
+
+- Fix Mailbox Viewer @thiamsantos (#562)
+
 ## 1.2.1
 
 ### 🧰 Maintenance
