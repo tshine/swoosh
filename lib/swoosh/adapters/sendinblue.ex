@@ -119,6 +119,8 @@ defmodule Swoosh.Adapters.Sendinblue do
     Map.put(payload, "bcc", Enum.map(bcc, &prepare_recipient/1))
   end
 
+  defp prepare_subject(payload, %{subject: ""}), do: payload
+
   defp prepare_subject(payload, %{subject: subject}),
     do: Map.put(payload, "subject", subject)
 
