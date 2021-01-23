@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.3.0
+
+### ✨ Features
+
+- Support integration tests @thiamsantos (#565)
+
 ## 1.2.2
 
 ### ✨ Features
