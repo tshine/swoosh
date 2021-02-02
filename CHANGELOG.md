@@ -1,5 +1,15 @@
 ## Changelog
 
+## 1.3.1
+
+### ✨ Features
+
+- Support Sendgrid `tracking_settings` as per API docs @craigp (#567)
+
+### 📝 Documentation
+
+- Link to pre-1.0/changelog.md instead of readme.md @woolfred (#566)
+
 ## 1.3.0
 
 ### ✨ Features
