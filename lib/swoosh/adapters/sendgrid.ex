@@ -1,5 +1,19 @@
 defmodule Swoosh.Adapters.Sendgrid do
-  @moduledoc ~S"""
+  @provider_options_personalization_fields [
+    :custom_args,
+    :substitutions,
+    :dynamic_template_data
+  ]
+
+  @provider_options_body_fields [
+    :template_id,
+    :asm,
+    :categories,
+    :mail_settings,
+    :tracking_settings
+  ]
+
+  @moduledoc ~s"""
   An adapter that sends email using the Sendgrid API.
 
   For reference: [Sendgrid API docs](https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/index.html)
@@ -15,6 +29,30 @@ defmodule Swoosh.Adapters.Sendgrid do
       defmodule Sample.Mailer do
         use Swoosh.Mailer, otp_app: :sample
       end
+
+  ## Provider Options
+
+  Supported provider options are the following:
+
+  #### Inserted into personalization
+
+  #{
+    for(
+      field <- @provider_options_personalization_fields,
+      do: "- " <> inspect(field) <> "\n"
+    )
+    |> Enum.join()
+  }
+
+  #### Inserted into request body
+
+  #{
+    for(
+      field <- @provider_options_body_fields,
+      do: "- " <> inspect(field) <> "\n"
+    )
+    |> Enum.join()
+  }
 
   ## Sandbox mode
 
@@ -73,12 +111,8 @@ defmodule Swoosh.Adapters.Sendgrid do
     |> prepare_content(email)
     |> prepare_attachments(email)
     |> prepare_reply_to(email)
-    |> prepare_template_id(email)
-    |> prepare_categories(email)
-    |> prepare_asm(email)
     |> prepare_custom_headers(email)
-    |> prepare_mail_settings(email)
-    |> prepare_tracking_settings(email)
+    |> prepare_provider_options_body_fields(email)
   end
 
   defp email_item({"", email}), do: %{email: email}
@@ -99,9 +133,7 @@ defmodule Swoosh.Adapters.Sendgrid do
       |> prepare_to(email)
       |> prepare_cc(email)
       |> prepare_bcc(email)
-      |> prepare_custom_vars(email)
-      |> prepare_substitutions(email)
-      |> prepare_dynamic_template_data(email)
+      |> prepare_provider_options_personalization_fields(email)
 
     Map.put(body, :personalizations, [personalizations])
   end
@@ -118,35 +150,6 @@ defmodule Swoosh.Adapters.Sendgrid do
 
   defp prepare_bcc(personalizations, %{bcc: bcc}),
     do: Map.put(personalizations, :bcc, bcc |> Enum.map(&email_item(&1)))
-
-  # example custom_vars
-  #
-  # %{"my_var" => %{"my_message_id": 123},
-  #   "my_other_var" => %{"my_other_id": 1, "stuff": 2}}
-  defp prepare_custom_vars(personalizations, %{
-         provider_options: %{custom_args: my_vars}
-       }) do
-    Map.put(personalizations, :custom_args, my_vars)
-  end
-
-  defp prepare_custom_vars(personalizations, _email), do: personalizations
-
-  defp prepare_substitutions(personalizations, %{
-         provider_options: %{substitutions: substitutions}
-       }) do
-    Map.put(personalizations, :substitutions, substitutions)
-  end
-
-  defp prepare_substitutions(personalizations, _email), do: personalizations
-
-  defp prepare_dynamic_template_data(personalizations, %{
-         provider_options: %{dynamic_template_data: dynamic_template_data}
-       }) do
-    Map.put(personalizations, :dynamic_template_data, dynamic_template_data)
-  end
-
-  defp prepare_dynamic_template_data(personalizations, _email),
-    do: personalizations
 
   defp prepare_subject(body, %{subject: subject}),
     do: Map.put(body, :subject, subject)
@@ -192,26 +195,6 @@ defmodule Swoosh.Adapters.Sendgrid do
   defp prepare_reply_to(body, %{reply_to: reply_to}),
     do: Map.put(body, :reply_to, reply_to |> email_item)
 
-  defp prepare_template_id(body, %{
-         provider_options: %{template_id: template_id}
-       }) do
-    Map.put(body, :template_id, template_id)
-  end
-
-  defp prepare_template_id(body, _email), do: body
-
-  defp prepare_categories(body, %{provider_options: %{categories: categories}}) do
-    Map.put(body, :categories, categories)
-  end
-
-  defp prepare_categories(body, _email), do: body
-
-  defp prepare_asm(body, %{provider_options: %{asm: asm}}) do
-    Map.put(body, :asm, asm)
-  end
-
-  defp prepare_asm(body, _email), do: body
-
   defp prepare_custom_headers(body, %{headers: headers})
        when map_size(headers) == 0,
        do: body
@@ -220,20 +203,16 @@ defmodule Swoosh.Adapters.Sendgrid do
     Map.put(body, :headers, headers)
   end
 
-  defp prepare_mail_settings(body, %{
-         provider_options: %{mail_settings: mail_settings}
+  defp prepare_provider_options_personalization_fields(personalization, %{
+         provider_options: provider_options
        }) do
-    Map.put(body, :mail_settings, mail_settings)
+    Map.merge(
+      personalization,
+      Map.take(provider_options, @provider_options_personalization_fields)
+    )
   end
 
-  defp prepare_mail_settings(body, _), do: body
-
-  defp prepare_tracking_settings(body, %{
-         provider_options: %{tracking_settings: tracking_settings}
-       }) do
-    Map.put(body, :tracking_settings, tracking_settings)
+  defp prepare_provider_options_body_fields(body, %{provider_options: provider_options}) do
+    Map.merge(body, Map.take(provider_options, @provider_options_body_fields))
   end
-
-  defp prepare_tracking_settings(body, _), do: body
-
 end
