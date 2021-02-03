@@ -26,13 +26,20 @@ if Code.ensure_loaded?(Plug) do
     alias Swoosh.Adapters.Local.Storage.Memory
 
     require EEx
-    EEx.function_from_file :defp, :template, "lib/plug/templates/mailbox_viewer/index.html.eex", [:assigns]
+
+    EEx.function_from_file(
+      :defp,
+      :template,
+      "lib/plug/templates/mailbox_viewer/index.html.eex",
+      [:assigns]
+    )
 
     def call(conn, opts) do
       conn =
         conn
         |> assign(:base_path, opts[:base_path] || "/")
         |> assign(:storage_driver, opts[:storage_driver] || Memory)
+
       super(conn, opts)
     end
 
@@ -58,6 +65,7 @@ if Code.ensure_loaded?(Plug) do
 
     get "/" do
       emails = conn.assigns.storage_driver.all()
+
       conn
       |> put_resp_content_type("text/html")
       |> send_resp(200, template(emails: emails, email: nil, conn: conn))
@@ -65,6 +73,7 @@ if Code.ensure_loaded?(Plug) do
 
     get "/:id/html" do
       email = conn.assigns.storage_driver.get(id)
+
       conn
       |> put_resp_content_type("text/html")
       |> send_resp(200, email.html_body)
@@ -72,6 +81,7 @@ if Code.ensure_loaded?(Plug) do
 
     get "/:id/attachments/:index" do
       index = String.to_integer(index)
+
       id
       |> conn.assigns.storage_driver.get()
       |> case do
@@ -83,15 +93,18 @@ if Code.ensure_loaded?(Plug) do
               conn
               |> put_resp_content_type(content_type)
               |> send_resp(200, data)
+
             %{path: path, content_type: content_type} when not is_nil(path) ->
               conn
               |> put_resp_content_type(content_type)
               |> send_resp(200, File.read!(path))
+
             _ ->
               conn
               |> put_resp_content_type("text/html")
               |> send_resp(500, "Attachment cannot be displayed")
           end
+
         _ ->
           conn
           |> put_resp_content_type("text/html")
@@ -102,6 +115,7 @@ if Code.ensure_loaded?(Plug) do
     get "/:id" do
       emails = conn.assigns.storage_driver.all()
       email = conn.assigns.storage_driver.get(id)
+
       conn
       |> put_resp_content_type("text/html")
       |> send_resp(200, template(emails: emails, email: email, conn: conn))
@@ -119,7 +133,8 @@ if Code.ensure_loaded?(Plug) do
         text_body: email.text_body,
         html_body: email.html_body,
         headers: email.headers,
-        provider_options: Enum.map(email.provider_options, fn {k, v} -> %{key: k, value: inspect(v)} end),
+        provider_options:
+          Enum.map(email.provider_options, fn {k, v} -> %{key: k, value: inspect(v)} end),
         attachments: Enum.map(email.attachments, &render_attachment_json/1)
       }
     end
