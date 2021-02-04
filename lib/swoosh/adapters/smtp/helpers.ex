@@ -18,6 +18,7 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
     mime_encode(type, subtype, headers, parts, encoding_config)
   end
 
+  # TODO: Remove conditional handling when going 2.0
   gen_smtp_major =
     if Code.ensure_loaded?(:gen_smtp_application) do
       Application.load(:gen_smtp)
