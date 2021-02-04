@@ -1,5 +1,19 @@
 ## Changelog
 
+## 1.3.2
+
+### ✨ Features
+
+- Remove base_path in favor of using script_name from Plug.Conn @princemaple (#570)
+
+### 🧰 Maintenance
+
+- Bump gen_smtp from 0.15.0 to 1.1.0 @dependabot (#571)
+
+### 📝 Documentation
+
+- Update postmark.ex @matthewford (#568)
+
 ## 1.3.1
 
 ### ✨ Features
