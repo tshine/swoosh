@@ -10,6 +10,11 @@ defmodule Swoosh.AttachmentTest do
     assert attachment.path == "/data/file"
   end
 
+  test "create an attachment with data" do
+    attachment = Attachment.new({:data, "data"})
+    assert attachment.data == "data"
+  end
+
   test "create an attachment with an unknown content type" do
     attachment = Attachment.new("/data/unknown-file")
     assert attachment.content_type == "application/octet-stream"
@@ -27,9 +32,7 @@ defmodule Swoosh.AttachmentTest do
 
   test "create an attachment from a Plug Upload struct" do
     path = "/data/uuid-random"
-    upload = %Plug.Upload{filename: "imaginary.zip",
-                          content_type: "application/zip",
-                          path: path}
+    upload = %Plug.Upload{filename: "imaginary.zip", content_type: "application/zip", path: path}
     attachment = Attachment.new(upload)
     assert attachment.content_type == "application/zip"
     assert attachment.filename == "imaginary.zip"
@@ -38,9 +41,7 @@ defmodule Swoosh.AttachmentTest do
 
   test "create an attachment from a Plug Upload struct with overrides" do
     path = "/data/uuid-random"
-    upload = %Plug.Upload{filename: "imaginary.zip",
-                          content_type: "application/zip",
-                          path: path}
+    upload = %Plug.Upload{filename: "imaginary.zip", content_type: "application/zip", path: path}
     attachment = Attachment.new(upload, filename: "real.zip", content_type: "application/other")
     assert attachment.content_type == "application/other"
     assert attachment.filename == "real.zip"
@@ -53,11 +54,37 @@ defmodule Swoosh.AttachmentTest do
   end
 
   test "create an attachment with custom headers" do
-    attachment = Attachment.new("/data/file.png", headers: [{"Content-Type", "text/calendar; method=\"REQUEST\""}])
+    attachment =
+      Attachment.new("/data/file.png",
+        headers: [{"Content-Type", "text/calendar; method=\"REQUEST\""}]
+      )
+
     assert length(attachment.headers) == 1
     {a, b} = Enum.at(attachment.headers, 0)
     assert a == "Content-Type"
     assert b == "text/calendar; method=\"REQUEST\""
   end
 
+  test "get_content returns data when exist" do
+    assert "assemble" ==
+             Attachment.get_content(%Attachment{
+               data: "assemble",
+               path: "test/support/attachment.txt"
+             })
+  end
+
+  test "get_content returns data from path if necessary" do
+    assert "assemble" == Attachment.get_content(%Attachment{path: "test/support/attachment.txt"})
+  end
+
+  test "get_content returns base64 when given the option" do
+    assert Base.encode64("assemble") ==
+             Attachment.get_content(%Attachment{data: "assemble"}, :base64)
+  end
+
+  test "get_content raises when no data or path is found" do
+    assert_raise Swoosh.AttachmentContentError, fn ->
+      Attachment.get_content(%Attachment{})
+    end
+  end
 end
