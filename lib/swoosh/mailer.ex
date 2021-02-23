@@ -189,7 +189,7 @@ defmodule Swoosh.Mailer do
       deps
       |> Enum.map(fn
         {lib, module} -> "#{module} from #{inspect(lib)}"
-        {module} -> inspect(module)
+        module -> inspect(module)
       end)
       |> Enum.map(&"\n- #{&1}")
 

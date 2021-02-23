@@ -126,4 +126,21 @@ defmodule Swoosh.MailerTest do
       NoAdapterMailer.deliver(email)
     end
   end
+
+  test "validate dependency" do
+    defmodule FakeDepAdapter do
+      use Swoosh.Adapter, required_deps: [VillanModule, v_dep: VModule]
+      def deliver(_, _), do: :ok
+    end
+
+    import ExUnit.CaptureLog
+
+    error =
+      capture_log(fn ->
+        assert :abort = Swoosh.Mailer.validate_dependency(FakeDepAdapter)
+      end)
+
+    assert error =~ "- VillanModule"
+    assert error =~ "- Elixir.VModule from :v_dep"
+  end
 end
