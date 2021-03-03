@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.3.3
+
+### ✨ Features
+
+- Allow passing an anonymous function to `assert_email_sent` @stefanchrobot (#576)
+
 ## 1.3.2
 
 ### ✨ Features
