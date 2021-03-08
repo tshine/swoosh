@@ -20,7 +20,7 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
 
   # TODO: Remove conditional handling when going 2.0
   gen_smtp_major =
-    if Code.ensure_loaded?(:gen_smtp_application) do
+    if Code.ensure_loaded?(:gen_smtp_client) do
       Application.load(:gen_smtp)
 
       :gen_smtp
