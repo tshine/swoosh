@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.3.4
+
+### 🧰 Maintenance
+
+- Fix `gen_smtp` detection (#578)
+
 ## 1.3.3
 
 ### ✨ Features
