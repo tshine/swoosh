@@ -24,17 +24,7 @@ defmodule Swoosh.Mixfile do
       name: "Swoosh",
       source_url: @source_url,
       homepage_url: @source_url,
-      docs: [
-        source_ref: "v#{@version}",
-        main: "Swoosh",
-        canonical: "http://hexdocs.pm/swoosh",
-        source_url: @source_url,
-        extras: [
-          "CHANGELOG.md",
-          "CODE_OF_CONDUCT.md",
-          "CONTRIBUTING.md"
-        ]
-      ],
+      docs: docs(),
 
       # Suppress warnings
       xref: [
@@ -76,6 +66,38 @@ defmodule Swoosh.Mixfile do
       {:ex_doc, "~> 0.16", only: :docs, runtime: false},
       {:mail, "~> 0.2", optional: true}
     ]
+  end
+
+  defp docs do
+    [
+      source_ref: "v#{@version}",
+      main: "Swoosh",
+      canonical: "http://hexdocs.pm/swoosh",
+      source_url: @source_url,
+      extras: [
+        "CHANGELOG.md",
+        "CODE_OF_CONDUCT.md",
+        "CONTRIBUTING.md"
+      ],
+      groups_for_modules: [
+        Email: [
+          Swoosh.Email,
+          Swoosh.Email.Recipient
+        ],
+        Adapters: adapter_modules(),
+        Plug: Plug.Swoosh.MailboxPreview,
+        Test: Swoosh.TestAssertions
+      ]
+    ]
+  end
+
+  defp adapter_modules do
+    Path.wildcard("lib/swoosh/adapters/*.ex")
+    |> Enum.map(fn path ->
+      content = File.read!(path)
+      [_, module] = Regex.run(~r/\Adefmodule (.+) do/, content)
+      module |> String.split(".") |> Module.concat()
+    end)
   end
 
   defp aliases do
