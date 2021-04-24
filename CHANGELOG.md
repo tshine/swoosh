@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.5
+
+- Support custom headers in the Gmail adapter @reichert621 (#587)
+
 ## 1.3.4
 
 ### 🧰 Maintenance
