@@ -116,7 +116,7 @@ defmodule Swoosh.ApiClient.Finch do
 
   @impl true
   def init do
-    unless Code.ensure_loaded?(:finch) do
+    unless Code.ensure_loaded?(Finch) do
       Logger.error("""
       Could not find finch dependency.
 
