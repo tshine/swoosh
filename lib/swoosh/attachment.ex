@@ -32,6 +32,9 @@ defmodule Swoosh.Attachment do
       Attachment.new(params["file"], type: "inline") # Where params["file"] is a %Plug.Upload
       Attachment.new({:data, File.read!("/path/to/attachment.png")}, filename: "image.png", content_type: "image/png", type: :inline)
 
+  Inline attachments by default use their filename
+  (or basename of the path if filename is not specified) as cid,
+  in relevant adapters.
   """
   @spec new(binary | struct | {:data, binary}, Keyword.t() | map) :: %__MODULE__{}
   def new(path, opts \\ [])
