@@ -23,13 +23,14 @@ defmodule Swoosh.Attachment do
       Attachment.new("/path/to/attachment.png", filename: "image.png")
       Attachment.new("/path/to/attachment.png", filename: "image.png", content_type: "image/png")
       Attachment.new(params["file"]) # Where params["file"] is a %Plug.Upload
+      Attachment.new({:data, File.read!("/path/to/attachment.png")}, filename: "image.png", content_type: "image/png")
 
   Examples with inline-attachments:
 
       Attachment.new("/path/to/attachment.png", type: :inline)
       Attachment.new("/path/to/attachment.png", filename: "image.png", type: :inline)
       Attachment.new("/path/to/attachment.png", filename: "image.png", content_type: "image/png", type: :inline)
-      Attachment.new(params["file"], type: "inline") # Where params["file"] is a %Plug.Upload
+      Attachment.new(params["file"], type: :inline) # Where params["file"] is a %Plug.Upload
       Attachment.new({:data, File.read!("/path/to/attachment.png")}, filename: "image.png", content_type: "image/png", type: :inline)
 
   Inline attachments by default use their filename
