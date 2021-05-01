@@ -1,6 +1,27 @@
 defmodule Swoosh.Attachment do
-  @moduledoc """
+  @moduledoc ~S"""
   Struct representing an attachment in an email.
+
+  ## Usage
+
+  For all usecases of `new/2` see the function documentation.
+
+  ## Inline Example
+
+      new()
+      |> to({avenger.name, avenger.email})
+      |> from({"Red Skull", "red_skull@villains.org"})
+      |> subject("End Game invitation QR Code")
+      |> html_body(~s|<h1>Hello #{avenger.name}</h1> Here is your QR Code <img src="cid:qrcode.png">|)
+      |> text_body("Hello #{avenger.name}. Please find your QR Code attached.\n")
+      |> attachment(
+        Swoosh.Attachment.new(
+          {:data, invitation_qr_code_binary},
+          filename: "qrcode.png",
+          content_type: "image/png",
+          type: :inline)
+      )
+      |> VillainMailer.deliver()
   """
 
   defstruct filename: nil, content_type: nil, path: nil, data: nil, type: :attachment, headers: []
@@ -36,6 +57,12 @@ defmodule Swoosh.Attachment do
   Inline attachments by default use their filename
   (or basename of the path if filename is not specified) as cid,
   in relevant adapters.
+
+      Attachment.new("/data/file.png", type: :inline)
+
+  Gives you something like this:
+
+      <img src="cid:file.png">
   """
   @spec new(binary | struct | {:data, binary}, Keyword.t() | map) :: %__MODULE__{}
   def new(path, opts \\ [])
