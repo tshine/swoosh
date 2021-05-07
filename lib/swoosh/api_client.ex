@@ -98,7 +98,7 @@ defmodule Swoosh.ApiClient.Finch do
   @moduledoc """
   Finch-based ApiClient for Swoosh.
 
-  In order to use Finch API client, you must start it and provide a :name.
+  In order to use `Finch` API client, you must start `Finch` and provide a :name.
   Often in your supervision tree:
 
       children = [
