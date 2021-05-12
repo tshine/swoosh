@@ -1,6 +1,6 @@
 ## Changelog
 
-## 1.3.6
+## 1.3.7
 
 - Suppress warning caused by `Mail.Message.put_header` @princemaple (#597)
 
