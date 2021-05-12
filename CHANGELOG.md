@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.8
+
+- Support OTP 24
+
 ## 1.3.7
 
 - Suppress warning caused by `Mail.Message.put_header` @princemaple (#597)
