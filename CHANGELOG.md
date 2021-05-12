@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.6
+
+- Suppress warning caused by `Mail.Message.put_header` @princemaple (#597)
+
 ## 1.3.5
 
 - Support custom headers in the Gmail adapter @reichert621 (#587)
