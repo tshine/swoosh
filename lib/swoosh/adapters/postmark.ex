@@ -47,6 +47,14 @@ defmodule Swoosh.Adapters.Postmark do
       |> to({"Steve Rogers", "steve.rogers@example.com"})
       |> subject("Hello, Avengers!")
       |> put_provider_option(:tag, "some tag")
+
+  ## Provider Options
+
+  - `:metadata` (map)
+  - `:tag` (string)
+  - `:template_id` (string)
+  - `:template_alias` (string)
+  - `:template_model` (map)
   """
 
   use Swoosh.Adapter, required_config: [:api_key]
@@ -165,6 +173,7 @@ defmodule Swoosh.Adapters.Postmark do
     |> prepare_template(email)
     |> prepare_custom_headers(email)
     |> prepare_tag(email)
+    |> prepare_metadata(email)
     |> prepare_message_stream(email)
   end
 
@@ -249,6 +258,12 @@ defmodule Swoosh.Adapters.Postmark do
   end
 
   defp prepare_tag(body, _), do: body
+
+  defp prepare_metadata(body, %{provider_options: %{metadata: metadata}}) do
+    Map.put(body, "Metadata", metadata)
+  end
+
+  defp prepare_metadata(body, _), do: body
 
   defp prepare_message_stream(body, %{provider_options: %{message_stream: value}}),
     do: Map.put(body, "MessageStream", value)
