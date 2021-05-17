@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.10
+
+- Add metadata support to Postmark adapter @jakubpawlowicz (#601)
+
 ## 1.3.9
 
 - Fix AWS SES adapter @lucacorti (#603) (regression from 1.3.8)
