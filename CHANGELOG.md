@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.9
+
+- Fix AWS SES adapter @lucacorti (#603) (regression from 1.3.8)
+
 ## 1.3.8
 
 - Support OTP 24
