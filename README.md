@@ -288,7 +288,8 @@ config :swoosh, serve_mailbox: true
 config :swoosh, serve_mailbox: true, preview_port: 4001
 ```
 
-In your Phoenix project you can also `forward` directly to the plug, like this:
+In your Phoenix project you can `forward` directly to the plug
+without spinning up a separate webserver, like this:
 
 ```elixir
 # in web/router.ex
