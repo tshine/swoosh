@@ -280,16 +280,15 @@ For email to reach this mailbox you will need to set your `Mailer` adapter to
 config :sample, Mailer,
   adapter: Swoosh.Adapters.Local
 
-# to run the preview server together as part of your app
+# to run the preview server alongside your app
+# which may not have a web interface already
 config :swoosh, serve_mailbox: true
 
 # to change the preview server port (4000 by default)
 config :swoosh, serve_mailbox: true, preview_port: 4001
 ```
 
-If you don't want to run the preview server as part of your app as shown above,
-in your Phoenix project you can also `forward` directly to the plug if you so
-choose, like this:
+In your Phoenix project you can also `forward` directly to the plug, like this:
 
 ```elixir
 # in web/router.ex
