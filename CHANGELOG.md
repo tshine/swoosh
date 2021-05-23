@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.3.11
+
+- Require plug cowboy to start mailbox server @thiamsantos (#606)
+
 ## 1.3.10
 
 - Add metadata support to Postmark adapter @jakubpawlowicz (#601)
