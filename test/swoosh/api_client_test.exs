@@ -16,7 +16,6 @@ defmodule Swoosh.ApiClientTest do
       body_params = %{"hello" => "world"}
 
       assert body_params == conn.body_params
-      assert {"cookie", "a=b"} in conn.req_headers
       assert expected_path == conn.request_path
       assert "POST" == conn.method
 
@@ -28,7 +27,7 @@ defmodule Swoosh.ApiClientTest do
                "http://localhost:#{bypass.port}/test",
                [{"Content-Type", "application/json"}],
                Swoosh.json_library().encode!(%{hello: :world}),
-               %Email{private: %{hackney_options: [cookie: "a=b"]}}
+               %Email{}
              )
   end
 

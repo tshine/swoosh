@@ -223,7 +223,7 @@ defmodule Swoosh.Adapters.AmazonSES do
   end
 
   defp prepare_header_length(headers, query) do
-    Map.put(headers, "Content-Length", String.length(query))
+    Map.put(headers, "Content-Length", query |> String.length() |> to_string())
   end
 
   defp prepare_authorization(config, signed_header_list, date_time, signature) do

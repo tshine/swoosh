@@ -33,7 +33,7 @@ defmodule Swoosh.Adapters.Mailjet do
 
   @impl true
   def deliver(%Email{} = email, config \\ []) do
-    send_request(prepare_body(email), config)
+    send_request(prepare_body(email), email, config)
   end
 
   @impl true
@@ -44,14 +44,15 @@ defmodule Swoosh.Adapters.Mailjet do
   end
 
   def deliver_many(emails, config) when is_list(emails) do
-    send_request(prepare_body(emails), config)
+    send_request(prepare_body(emails), emails, config)
   end
 
-  defp send_request(body, config) do
+  defp send_request(body, email_or_emails, config) do
+    email = email_or_emails |> List.wrap() |> List.first()
     headers = prepare_headers(config)
     url = [base_url(config), "/", @api_endpoint]
 
-    case :hackney.post(url, headers, body, [:with_body]) do
+    case Swoosh.ApiClient.post(url, headers, body, email) do
       {:ok, 200, _headers, body} ->
         {:ok, parse_results(body)}
 

@@ -98,8 +98,7 @@ defmodule Swoosh.Adapters.Postmark do
     body = emails |> prepare_body() |> Swoosh.json_library().encode!
     url = [base_url(config), api_endpoint(List.first(emails), true)]
 
-    # Could not use `Swoosh.ApiClient.post` here since I have more than one email
-    case :hackney.post(url, headers, body, [:with_body]) do
+    case Swoosh.ApiClient.post(url, headers, body, List.first(emails)) do
       {:ok, 200, _headers, body} ->
         results =
           Enum.map(Swoosh.json_library().decode!(body), fn email_result ->

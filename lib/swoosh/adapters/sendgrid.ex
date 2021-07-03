@@ -97,8 +97,9 @@ defmodule Swoosh.Adapters.Sendgrid do
 
   defp extract_id(headers) do
     headers
+    |> Enum.map(fn {k, v} -> {String.downcase(k), v} end)
     |> Enum.into(%{})
-    |> Map.get("X-Message-Id")
+    |> Map.get("x-message-id")
   end
 
   defp base_url(config), do: config[:base_url] || @base_url

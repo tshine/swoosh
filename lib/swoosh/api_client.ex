@@ -83,7 +83,7 @@ defmodule Swoosh.ApiClient.Hackney do
 
   @impl true
   def post(url, headers, body, %Swoosh.Email{} = email) do
-    hackney_options = email.private[:hackney_options] || []
+    hackney_options = email.private[:hackney_options] || email.private[:client_options] || []
 
     :hackney.post(
       url,
@@ -114,6 +114,7 @@ if Code.ensure_loaded?(Finch) do
     require Logger
 
     @behaviour Swoosh.ApiClient
+    @user_agent {"User-Agent", "swoosh/#{Swoosh.version()}"}
 
     @impl true
     def init do
@@ -138,11 +139,12 @@ if Code.ensure_loaded?(Finch) do
     end
 
     @impl true
-    def post(url, headers, body, %Swoosh.Email{}) do
+    def post(url, headers, body, %Swoosh.Email{} = email) do
       url = IO.iodata_to_binary(url)
-      request = Finch.build(:post, url, headers, body)
+      request = Finch.build(:post, url, [@user_agent | headers], body)
+      options = email.private[:client_options] || []
 
-      case Finch.request(request, Swoosh.Finch) do
+      case Finch.request(request, Swoosh.Finch, options) do
         {:ok, %Finch.Response{} = response} ->
           {:ok, response.status, response.headers, response.body}
 
