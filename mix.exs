@@ -2,7 +2,7 @@ defmodule Swoosh.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/swoosh/swoosh"
-  @version "1.3.11"
+  @version "1.4.0"
 
   def project do
     [
@@ -88,6 +88,11 @@ defmodule Swoosh.Mixfile do
           Swoosh.Email.Recipient
         ],
         Adapters: adapter_modules(),
+        "Api Client": [
+          Swoosh.ApiClient,
+          Swoosh.ApiClient.Finch,
+          Swoosh.ApiClient.Hackney
+        ],
         Plug: Plug.Swoosh.MailboxPreview,
         Test: Swoosh.TestAssertions
       ]

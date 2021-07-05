@@ -6,6 +6,7 @@ defmodule Swoosh.ApiClient do
 
       config :swoosh, :api_client, MyAPIClient
 
+  Swoosh comes with `Swoosh.ApiClient.Hackney` and `Swoosh.ApiClient.Finch`.
   """
 
   @type url :: binary()
@@ -27,7 +28,7 @@ defmodule Swoosh.ApiClient do
   @optional_callbacks init: 0
 
   @doc """
-  API used by adapters to post to a given URL with headers, body, and e-mail.
+  API used by adapters to post to a given URL with headers, body, and email.
   """
   def post(url, headers, body, email) do
     api_client().post(url, headers, body, email)
