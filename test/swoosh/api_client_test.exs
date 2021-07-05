@@ -8,7 +8,7 @@ defmodule Swoosh.ApiClientTest do
     {:ok, bypass: Bypass.open()}
   end
 
-  test "ApiClient sends post request with hackney_options", %{bypass: bypass} do
+  test "ApiClient sends post request", %{bypass: bypass} do
     Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
 
@@ -36,7 +36,6 @@ defmodule Swoosh.ApiClientTest do
       conn = parse(conn)
 
       assert {"user-agent", "swoosh/#{Swoosh.version()}"} in conn.req_headers
-      assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, "OK")
     end)

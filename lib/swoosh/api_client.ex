@@ -94,63 +94,61 @@ defmodule Swoosh.ApiClient.Hackney do
   end
 end
 
-if Code.ensure_loaded?(Finch) do
-  defmodule Swoosh.ApiClient.Finch do
-    @moduledoc """
-    Finch-based ApiClient for Swoosh.
+defmodule Swoosh.ApiClient.Finch do
+  @moduledoc """
+  Finch-based ApiClient for Swoosh.
 
-    In order to use `Finch` API client, you must start `Finch` and provide a :name.
-    Often in your supervision tree:
+  In order to use `Finch` API client, you must start `Finch` and provide a :name.
+  Often in your supervision tree:
 
-        children = [
-          {Finch, name: Swoosh.Finch}
-        ]
+      children = [
+        {Finch, name: Swoosh.Finch}
+      ]
 
-    Or, in rare cases, dynamically:
+  Or, in rare cases, dynamically:
 
-        Finch.start_link(name: Swoosh.Finch)
-    """
+      Finch.start_link(name: Swoosh.Finch)
+  """
 
-    require Logger
+  require Logger
 
-    @behaviour Swoosh.ApiClient
-    @user_agent {"User-Agent", "swoosh/#{Swoosh.version()}"}
+  @behaviour Swoosh.ApiClient
+  @user_agent {"User-Agent", "swoosh/#{Swoosh.version()}"}
 
-    @impl true
-    def init do
-      unless Code.ensure_loaded?(Finch) do
-        Logger.error("""
-        Could not find finch dependency.
+  @impl true
+  def init do
+    unless Code.ensure_loaded?(Finch) do
+      Logger.error("""
+      Could not find finch dependency.
 
-        Please add :finch to your dependencies:
+      Please add :finch to your dependencies:
 
-            {:finch, "~> 0.6"}
+          {:finch, "~> 0.8"}
 
-        Or set your own Swoosh.ApiClient:
+      Or set your own Swoosh.ApiClient:
 
-            config :swoosh, :api_client, MyAPIClient
-        """)
+          config :swoosh, :api_client, MyAPIClient
+      """)
 
-        raise "missing finch dependency"
-      end
-
-      _ = Application.ensure_all_started(:finch)
-      :ok
+      raise "missing finch dependency"
     end
 
-    @impl true
-    def post(url, headers, body, %Swoosh.Email{} = email) do
-      url = IO.iodata_to_binary(url)
-      request = Finch.build(:post, url, [@user_agent | headers], body)
-      options = email.private[:client_options] || []
+    _ = Application.ensure_all_started(:finch)
+    :ok
+  end
 
-      case Finch.request(request, Swoosh.Finch, options) do
-        {:ok, %Finch.Response{} = response} ->
-          {:ok, response.status, response.headers, response.body}
+  @impl true
+  def post(url, headers, body, %Swoosh.Email{} = email) do
+    url = IO.iodata_to_binary(url)
+    request = Finch.build(:post, url, [@user_agent | headers], body)
+    options = email.private[:client_options] || []
 
-        {:error, reason} ->
-          {:error, reason}
-      end
+    case Finch.request(request, Swoosh.Finch, options) do
+      {:ok, response} ->
+        {:ok, response.status, response.headers, response.body}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 end

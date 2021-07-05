@@ -32,6 +32,7 @@ defmodule Swoosh.Mixfile do
           :hackney,
           :gen_smtp_client,
           :mimemail,
+          Finch,
           Plug.Adapters.Cowboy,
           Plug.Conn.Query,
           Plug.Cowboy,
