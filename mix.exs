@@ -58,7 +58,7 @@ defmodule Swoosh.Mixfile do
 
   defp deps do
     [
-      {:mime, "~> 1.1"},
+      {:mime, "~> 1.1 or ~> 2.0"},
       {:jason, "~> 1.0"},
       {:hackney, "~> 1.9", optional: true},
       {:finch, "~> 0.6", optional: true},
