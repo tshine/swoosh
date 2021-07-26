@@ -60,6 +60,49 @@ defmodule Swoosh.Mailer do
       %Swoosh.Email{from: {"", "tony.stark@example.com"}, ...}
       iex> Mailer.deliver(email, domain: "jarvis.com")
       :ok
+
+  ## Telemetry
+
+  Each mailer outputs the following telemetry events:
+
+  - `[:swoosh, :deliver, :start]`: occurs when `Mailer.deliver/2` begins.
+  - `[:swoosh, :deliver, :stop]`: occurs when `Mailer.deliver/2` completes.
+  - `[:swoosh, :deliver, :exception]`: occurs when `Mailer.deliver/2` throws an exception.
+  - `[:swoosh, :deliver_many, :start]`: occurs when `Mailer.deliver_many/2` begins.
+  - `[:swoosh, :deliver_many, :stop]`: occurs when `Mailer.deliver_many/2` completes.
+  - `[:swoosh, :deliver_many, :exception]`: occurs when `Mailer.deliver_many/2` throws an exception.
+
+  ### Capturing events
+
+  You can capture events by calling `:telemetry.attach/4` or `:telemetry.attach_many/4`. Here's an example:
+
+      # tracks the number of emails sent successfully/errored
+      defmodule MyHandler do
+        def handle_event([:swoosh, :deliver, :stop], _measurements, metadata, _config) do
+          StatsD.increment("mail.sent.success", 1, %{mailer: metadata.mailer})
+        end
+
+        def handle_event([:swoosh, :deliver, :exception], _measurements, metadata, _config) do
+          StatsD.increment("mail.sent.failure", 1, %{mailer: metadata.mailer})
+        end
+
+        def handle_event([:swoosh, :deliver_many, :stop], _measurements, metadata, _config) do
+          StatsD.increment("mail.sent.success", length(metadata.emails), %{mailer: metadata.mailer})
+        end
+
+        def handle_event([:swoosh, :deliver_many, :exception], _measurements, metadata, _config) do
+          StatsD.increment("mail.sent.failure", length(metadata.emails), %{mailer: metadata.mailer})
+        end
+      end
+
+  in `c:Application.start/2` callback:
+
+      :telemetry.attach_many("my-handler", [
+         [:swoosh, :deliver, :stop],
+         [:swoosh, :deliver, :exception],
+         [:swoosh, :deliver_many, :stop],
+         [:swoosh, :deliver_many, :exception],
+       ], &MyHandler.handle_event/4, nil)
   """
 
   alias Swoosh.DeliveryError
@@ -75,7 +118,11 @@ defmodule Swoosh.Mailer do
       def deliver(email, config \\ [])
 
       def deliver(email, config) do
-        Mailer.deliver(email, parse_config(config))
+        metadata = %{email: email, config: config}
+
+        instrument(:deliver, metadata, fn ->
+          Mailer.deliver(email, parse_config(config))
+        end)
       end
 
       @spec deliver!(Swoosh.Email.t(), Keyword.t()) :: term | no_return
@@ -92,7 +139,11 @@ defmodule Swoosh.Mailer do
       def deliver_many(emails, config \\ [])
 
       def deliver_many(emails, config) do
-        Mailer.deliver_many(emails, parse_config(config))
+        metadata = %{emails: emails, config: config}
+
+        instrument(:deliver_many, metadata, fn ->
+          Mailer.deliver_many(emails, parse_config(config))
+        end)
       end
 
       @on_load :validate_dependency
@@ -105,6 +156,17 @@ defmodule Swoosh.Mailer do
 
       defp parse_config(config) do
         Mailer.parse_config(@otp_app, __MODULE__, @mailer_config, config)
+      end
+
+      defp instrument(key, metadata, fun) do
+        metadata = Map.merge(metadata, %{mailer: __MODULE__})
+
+        :telemetry.span([:swoosh, key], metadata, fn ->
+          case fun.() do
+            {:ok, result} -> {{:ok, result}, Map.put(metadata, :result, result)}
+            {:error, error} -> {{:error, error}, Map.put(metadata, :error, error)}
+          end
+        end)
       end
     end
   end

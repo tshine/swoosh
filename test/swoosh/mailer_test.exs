@@ -13,7 +13,21 @@ defmodule Swoosh.MailerTest do
   defmodule FakeAdapter do
     use Swoosh.Adapter
 
-    def deliver(email, config), do: {:ok, {email, config}}
+    def deliver(email, config) do
+      case Keyword.get(config, :force_error) do
+        true -> {:error, {email, config}}
+        :exception -> raise "whoops"
+        _ -> {:ok, {email, config}}
+      end
+    end
+
+    def deliver_many(emails, config) do
+      case Keyword.get(config, :force_error) do
+        true -> {:error, {emails, config}}
+        :exception -> raise "whoops"
+        _ -> {:ok, {emails, config}}
+      end
+    end
   end
 
   defmodule FakeMailer do
@@ -142,5 +156,94 @@ defmodule Swoosh.MailerTest do
 
     assert error =~ "- VillanModule"
     assert error =~ "- Elixir.VModule from :v_dep"
+  end
+
+  describe "telemetry" do
+    setup do
+      handler = fn event, %{}, metadata, _ ->
+        send(self(), {:telemetry, event, metadata})
+      end
+
+      on_exit(fn ->
+        :telemetry.detach("telemetry-handler")
+      end)
+
+      :telemetry.attach_many(
+        "telemetry-handler",
+        [
+          [:swoosh, :deliver, :start],
+          [:swoosh, :deliver, :stop],
+          [:swoosh, :deliver, :exception],
+          [:swoosh, :deliver_many, :start],
+          [:swoosh, :deliver_many, :stop],
+          [:swoosh, :deliver_many, :exception]
+        ],
+        handler,
+        nil
+      )
+    end
+
+    test "deliver/2 outputs telemetry event on success", %{valid_email: email} do
+      assert {:ok, _} = FakeMailer.deliver(email)
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :start],
+                      %{mailer: FakeMailer, email: ^email}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :stop], %{mailer: FakeMailer, result: _}}
+    end
+
+    test "deliver/2 outputs telemetry event on error", %{valid_email: email} do
+      assert {:error, _} = FakeMailer.deliver(email, force_error: true)
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :start],
+                      %{mailer: FakeMailer, email: ^email}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :stop], %{mailer: FakeMailer, error: _}}
+    end
+
+    test "deliver/2 outputs telemetry event on exception", %{valid_email: email} do
+      assert_raise RuntimeError, "whoops", fn ->
+        FakeMailer.deliver(email, force_error: :exception)
+      end
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :start],
+                      %{mailer: FakeMailer, email: ^email}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver, :exception],
+                      %{mailer: FakeMailer, kind: :error, reason: _}}
+    end
+
+    test "deliver_many/2 outputs telemetry event on success", %{valid_email: email} do
+      emails = [email, email]
+      assert {:ok, _} = FakeMailer.deliver_many(emails, [])
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :start],
+                      %{mailer: FakeMailer, emails: ^emails}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :stop],
+                      %{mailer: FakeMailer, result: _}}
+    end
+
+    test "deliver_many/2 outputs telemetry event on error", %{valid_email: email} do
+      emails = [email, email]
+      assert {:error, _} = FakeMailer.deliver_many(emails, force_error: true)
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :start],
+                      %{mailer: FakeMailer, emails: ^emails}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :stop],
+                      %{mailer: FakeMailer, error: _}}
+    end
+
+    test "deliver_many/2 outputs telemetry event on exception", %{valid_email: email} do
+      assert_raise RuntimeError, "whoops", fn ->
+        FakeMailer.deliver_many([email], force_error: :exception)
+      end
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :start], %{mailer: FakeMailer}}
+
+      assert_receive {:telemetry, [:swoosh, :deliver_many, :exception],
+                      %{mailer: FakeMailer, kind: :error, reason: _}}
+    end
   end
 end
