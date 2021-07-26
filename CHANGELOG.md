@@ -1,5 +1,15 @@
 ## Changelog
 
+## 1.5.0
+
+### ✨ Features
+
+- Add telemetry to `Mailer.deliver` \& `Mailer.deliver_many` @joshnuss (#614)
+
+### 📝 Documentation
+
+- Improve README.md - mention `api_client` as false @philss (#610)
+
 ## 1.4.0
 
 ### Add `Swoosh.ApiClient.Finch`
