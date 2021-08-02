@@ -193,7 +193,7 @@ Please take a look at the official docs for
 [Task.Supervisor](https://hexdocs.pm/elixir/Task.Supervisor.html) for further
 options.
 
-Note: it is not to say that `Task.start` is enough to cover the whole async
+It is not to say that `Task.start` is enough to cover the whole async
 aspect of sending emails. It is more to say that the implementation of sending
 emails is very application specific. For example, the simple example above
 might be sufficient for some small applications but not so much for more
@@ -202,6 +202,16 @@ the service provider all need to be considered and handled, maybe differently
 as well. Whether to retry, how many times you want to retry, what to do when
 everything fails, these questions all have different answers in different
 context.
+
+If the email was to any extent mission critial, a safer solution than `Task.start`
+would be required to make sure that the email gets delivered.
+Adding a job queue to your system would be a good choice.
+Elixir ecosystem has many
+[job queue libraries](https://hex.pm/packages?search=job+queue&sort=recent_downloads).
+
+- [Oban](https://hexdocs.pm/oban/Oban.html) is the current community favourite.
+It uses PostgreSQL for storage and coordination.
+- [Exq](https://hexdocs.pm/exq/readme.html) uses Redis and is compatible with Resque / Sidekiq.
 
 ## Phoenix integration
 
