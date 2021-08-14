@@ -2,7 +2,7 @@ defmodule Swoosh.Adapters.Gmail do
   @moduledoc """
   An adapter that sends email using Gmail api
 
-  For reference [Gmail API docs](https://developers.google.com/gmail/api)
+  For reference: [Gmail API docs](https://developers.google.com/gmail/api)
 
   ## Dependency
 
