@@ -2,7 +2,7 @@ defmodule Swoosh.Adapters.SocketLabs do
   @moduledoc ~S"""
   An adapter that sends email using the SocketLabs Injection API.
 
-  For reference: [SocketLabs API docs](https://inject.docs.socketlabs.com/v1/documentation/introduction
+  For reference: [SocketLabs API docs](https://inject.docs.socketlabs.com/v1/documentation/introduction)
 
   ## Example
 
