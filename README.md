@@ -104,6 +104,7 @@ configuration options.
   ```elixir
   config :swoosh, :api_client, false
   ```
+
   This is the case when you are using `Swoosh.Adapters.Local`, `Swoosh.Adapters.Test` and
   adapters that are SMTP based, that don't require an API client.
 
@@ -178,12 +179,12 @@ Swoosh does not make any special arrangements for sending emails in a
 non-blocking manner. In many ways, this should not be a concern in Elixir
 for two reasons:
 
-  1. Nowadays most applications use a third-party service to send emails
-     over HTTPS and their response times are relatively fast;
+1. Nowadays most applications use a third-party service to send emails
+   over HTTPS and their response times are relatively fast;
 
-  2. Opposite to some stacks, sending emails, talking to third party apps, etc
-     in Elixir do not block or interfere with other requests, so there is
-     no reason to default to async emails - unless it is explicitly needed
+2. Opposite to some stacks, sending emails, talking to third party apps, etc
+   in Elixir do not block or interfere with other requests, so there is
+   no reason to default to async emails - unless it is explicitly needed
 
 If you do want to send asynchronous emails in Swoosh, one can simply leverage
 Elixir's standard library.
@@ -192,16 +193,16 @@ First add a Task supervisor to your application root, usually at
 `lib/my_app/application.ex`:
 
 ```elixir
-  def start(_, _) do
-    children = [
-      ...,
-      # Before the endpoint
-      {Task.Supervisor, name: MyApp.AsyncEmailSupervisor},
-      MyApp.Endpoint
-    ]
-    
-    Supervisor.start_link(children, strategy: :one_for_one)
-  end
+def start(_, _) do
+  children = [
+    ...,
+    # Before the endpoint
+    {Task.Supervisor, name: MyApp.AsyncEmailSupervisor},
+    MyApp.Endpoint
+  ]
+
+  Supervisor.start_link(children, strategy: :one_for_one)
+end
 ```
 
 Now, whenever you want to send an email:
@@ -233,7 +234,7 @@ Elixir's ecosystem has many
 [job queue libraries](https://hex.pm/packages?search=job+queue&sort=recent_downloads).
 
 - [Oban](https://hexdocs.pm/oban/Oban.html) is the current community favourite.
-It uses PostgreSQL for storage and coordination.
+  It uses PostgreSQL for storage and coordination.
 - [Exq](https://hexdocs.pm/exq/readme.html) uses Redis and is compatible with Resque / Sidekiq.
 
 ## Phoenix integration
@@ -378,7 +379,7 @@ preview server independently:
 $ mix swoosh.mailbox.server
 ```
 
-*Note*: the mailbox preview won't display emails
+_Note_: the mailbox preview won't display emails
 being sent from outside its own node. So if you are testing using an `IEx` session,
 it's recommended to boot the application in the same session.
 `iex -S mix phx.server` or `iex -S mix swoosh.mailbox.server` will do the trick.
