@@ -247,8 +247,8 @@ bodies using Phoenix views, templates and layouts.
 Taking the example from above the "Getting Started" section, your code would
 look something like this:
 
-```elixir
-# web/templates/layout/email.html.eex
+> web/templates/layout/email.html.eex
+```
 <html>
   <head>
     <title><%= @email.subject %></title>
@@ -257,13 +257,17 @@ look something like this:
     <%= @inner_content %>
   </body>
 </html>
+```
 
-# web/templates/email/welcome.html.eex
+> web/templates/email/welcome.html.eex
+```html
 <div>
   <h1>Welcome to Sample, <%= @username %>!</h1>
 </div>
+```
 
-# web/emails/user_email.ex
+> web/emails/user_email.ex
+```elixir
 defmodule Sample.UserEmail do
   use Phoenix.Swoosh, view: Sample.EmailView, layout: {Sample.LayoutView, :email}
 
