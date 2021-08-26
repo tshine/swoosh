@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :bypass, adapter: Plug.Adapters.Cowboy2
 
