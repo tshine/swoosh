@@ -79,7 +79,7 @@ configuration options.
 
   ```elixir
   def deps do
-    [{:swoosh, "~> 1.4"}]
+    [{:swoosh, "~> 1.5"}]
   end
   ```
 
@@ -115,7 +115,7 @@ configuration options.
   ```elixir
   def deps do
     [
-      {:swoosh, "~> 1.4"},
+      {:swoosh, "~> 1.5"},
       {:gen_smtp, "~> 1.0"}
     ]
   end
