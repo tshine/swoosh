@@ -71,7 +71,7 @@ if Code.ensure_loaded?(Plug) do
 
       conn
       |> put_resp_content_type("text/html")
-      |> send_resp(200, email.html_body)
+      |> send_resp(200, replace_inline_references(email))
     end
 
     get "/:id/attachments/:index" do
@@ -153,6 +153,22 @@ if Code.ensure_loaded?(Plug) do
         "" -> "n/a"
         recipient -> Plug.HTML.html_escape(recipient)
       end
+    end
+
+    defp replace_inline_references(%{html_body: nil, text_body: text_body}) do
+      text_body
+    end
+
+    defp replace_inline_references(%{html_body: html_body, attachments: attachments}) do
+      ~r/"cid:([^"]*)"/
+      |> Regex.scan(html_body)
+      |> Enum.reduce(html_body, fn [_, ref], body ->
+        with index when is_integer(index) <- Enum.find_index(attachments, &(&1.filename == ref)) do
+          String.replace(body, "cid:#{ref}", "attachments/#{index}")
+        else
+          nil -> html_body
+        end
+      end)
     end
   end
 end
