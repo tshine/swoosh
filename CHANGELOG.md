@@ -1,5 +1,19 @@
 ## Changelog
 
+## 1.5.1
+
+### ✨ Features
+
+- Adding support for inline attachments preview in MailboxPreview @theodowling (#628)
+
+### 📝 Documentation
+
+- Fixing Typo @Orijhins (#629)
+- Further cleanup async section @josevalim (#621)
+- Build upon async emails section @josevalim (#620)
+- Fix typos @kianmeng (#618)
+- Fix a few typos in the docs @nickjj (#617)
+
 ## 1.5.0
 
 ### ✨ Features
