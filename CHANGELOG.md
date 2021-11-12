@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.5.2
+
+### Fixes
+
+- Fix closing tag @feld (#634)
+
 ## 1.5.1
 
 ### ✨ Features
