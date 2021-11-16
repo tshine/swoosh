@@ -10,7 +10,7 @@ defmodule Swoosh.Adapters.SMTP do
       def deps do
         [
          {:swoosh, "~> 1.3"},
-         {:gen_smtp, "~> 1.1}
+         {:gen_smtp, "~> 1.1"}
         ]
       end
 
