@@ -6,6 +6,7 @@ jobs:
   publish:
     env:
       MIX_ENV: docs
+      HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +28,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache-elixir-deps.outputs.cache-hit != 'true'
-        run: MIX_ENV=test mix do deps.get, deps.compile, compile
+        run: mix do deps.get, deps.compile, compile
 
       - name: Build and publish
         run: mix hex.publish docs --yes
