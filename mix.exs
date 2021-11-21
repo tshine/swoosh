@@ -68,7 +68,7 @@ defmodule Swoosh.Mixfile do
       {:cowboy, "~> 1.1 or ~> 2.4", optional: true},
       {:plug_cowboy, ">= 1.0.0", optional: true},
       {:bypass, "~> 2.1", only: :test},
-      {:ex_doc, "~> 0.16", only: :docs, runtime: false}
+      {:ex_doc, "~> 0.26", only: :docs, runtime: false}
     ]
   end
 
