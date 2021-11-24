@@ -25,6 +25,10 @@ defmodule Swoosh.Mixfile do
       source_url: @source_url,
       homepage_url: @source_url,
       docs: docs(),
+      preferred_cli_env: [
+        docs: :docs,
+        "hex.publish": :docs
+      ],
 
       # Suppress warnings
       xref: [
