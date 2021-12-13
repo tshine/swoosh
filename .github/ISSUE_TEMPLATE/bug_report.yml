@@ -1,10 +1,12 @@
 name: '🐛 Bug report'
 description: Create a report to help us improve
+labels: bug
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for using the bug template!
+        Thank you for using the bug template! 🙏
+
   - type: textarea
     id: description
     attributes:
@@ -12,33 +14,28 @@ body:
       description: Provide a clear and concise description of the challenge you are running into.
     validations:
       required: true
+
   - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce the Bug or Issue
       description: Describe the steps we have to take to reproduce the behavior.
-      placeholder: |
-        1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
-        4. See error
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
       label: Expected behavior
       description: Provide a clear and concise description of what you expected to happen.
-      placeholder: |
-        As a user, I expected ___ behavior but i am seeing ___
-    validations:
-      required: true
+
   - type: input
     id: link
     attributes:
       label: Your reproducible example
       placeholder: |
         e.g. https://github.com/your/repo
+
   - type: textarea
     id: screenshots_or_videos
     attributes:
@@ -49,6 +46,7 @@ body:
         to the following link: https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files
       placeholder: |
         You can drag your video or image files inside of this editor ↓
+
   - type: textarea
     id: platform
     attributes:
@@ -56,8 +54,7 @@ body:
       value: |
         - OTP:
         - Elixir:
-    validations:
-      required: true
+
   - type: textarea
     id: additional
     attributes:
