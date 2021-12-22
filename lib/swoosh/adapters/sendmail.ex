@@ -50,7 +50,7 @@ defmodule Swoosh.Adapters.Sendmail do
 
   @doc false
   def cmd_args(config) do
-    if(config[:qmail], do: "", else: " -oi -t") <> String.trim(" #{config[:cmd_args]}")
+    if(config[:qmail], do: "", else: " -oi -t") <> String.trim_trailing(" #{config[:cmd_args]}")
   end
 
   @doc false
