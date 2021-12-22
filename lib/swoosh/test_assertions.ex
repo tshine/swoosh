@@ -59,7 +59,8 @@ defmodule Swoosh.TestAssertions do
     assert_received {:email, _}
   end
 
-  @spec assert_email_sent(Email.t() | Keyword.t() | (Email.t() -> boolean())) :: :ok | tuple | no_return
+  @spec assert_email_sent(Email.t() | Keyword.t() | (Email.t() -> boolean())) ::
+          :ok | tuple | no_return
 
   @doc ~S"""
   Asserts `email` was sent.

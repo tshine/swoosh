@@ -16,6 +16,7 @@ defmodule Swoosh.Adapters.Local.Storage.Memory do
     case GenServer.start_link(__MODULE__, args, name: {:global, __MODULE__}) do
       {:ok, pid} ->
         {:ok, pid}
+
       {:error, {:already_started, pid}} ->
         Process.link(pid)
         {:ok, pid}
@@ -124,6 +125,7 @@ defmodule Swoosh.Adapters.Local.Storage.Memory do
 
   def handle_call({:push, email}, _from, emails) do
     id = :crypto.strong_rand_bytes(16) |> Base.encode16() |> String.downcase()
+
     email =
       email
       |> Swoosh.Email.header("Message-ID", id)

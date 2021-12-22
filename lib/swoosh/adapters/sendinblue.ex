@@ -129,7 +129,7 @@ defmodule Swoosh.Adapters.Sendinblue do
     Map.put(payload, "cc", Enum.map(cc, &prepare_recipient/1))
   end
 
-  defp prepare_bcc(payload,  %{bcc: []}), do: payload
+  defp prepare_bcc(payload, %{bcc: []}), do: payload
 
   defp prepare_bcc(payload, %{bcc: bcc}) do
     Map.put(payload, "bcc", Enum.map(bcc, &prepare_recipient/1))

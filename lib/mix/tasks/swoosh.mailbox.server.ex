@@ -20,7 +20,7 @@ defmodule Mix.Tasks.Swoosh.Mailbox.Server do
 
   def run(args) do
     Application.put_env(:swoosh, :serve_mailbox, true)
-    Mix.Task.run "run", run_args() ++ args
+    Mix.Task.run("run", run_args() ++ args)
   end
 
   defp run_args do
@@ -28,6 +28,6 @@ defmodule Mix.Tasks.Swoosh.Mailbox.Server do
   end
 
   defp iex_running? do
-    Code.ensure_loaded?(IEx) && IEx.started?
+    Code.ensure_loaded?(IEx) && IEx.started?()
   end
 end
