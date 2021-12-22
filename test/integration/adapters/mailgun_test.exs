@@ -10,6 +10,7 @@ defmodule Swoosh.Integration.Adapters.MailgunTest do
       domain: System.get_env("MAILGUN_DOMAIN"),
       api_key: System.get_env("MAILGUN_API_KEY")
     ]
+
     {:ok, config: config}
   end
 

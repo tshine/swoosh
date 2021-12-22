@@ -20,9 +20,11 @@ defmodule Swoosh.EmailTest do
   end
 
   test "new raises if arguments contain unknown field" do
-    assert_raise ArgumentError, """
-    invalid field `:sbject` (value="Unknown") for Swoosh.Email.new/1.
-    """, fn -> new(sbject: "Unknown") end
+    assert_raise ArgumentError,
+                 """
+                 invalid field `:sbject` (value="Unknown") for Swoosh.Email.new/1.
+                 """,
+                 fn -> new(sbject: "Unknown") end
   end
 
   test "from/2" do
@@ -70,11 +72,22 @@ defmodule Swoosh.EmailTest do
     assert email == %Email{to: [{"", "tony.stark@example.com"}]}
 
     email = email |> to({"Steve Rogers", "steve.rogers@example.com"})
-    assert email == %Email{to: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "tony.stark@example.com"}]}
 
-    email = email |> to(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{to: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"},
-                                {"Steve Rogers", "steve.rogers@example.com"}, {"", "tony.stark@example.com"}]}
+    assert email == %Email{
+             to: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "tony.stark@example.com"}]
+           }
+
+    email =
+      email |> to(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             to: [
+               {"", "bruce.banner@example.com"},
+               {"Thor Odinson", "thor.odinson@example.com"},
+               {"Steve Rogers", "steve.rogers@example.com"},
+               {"", "tony.stark@example.com"}
+             ]
+           }
   end
 
   test "put_to/2 replace new recipient(s) in \"to\"" do
@@ -83,11 +96,15 @@ defmodule Swoosh.EmailTest do
     email = email |> put_to("tony.stark@example.com")
     assert email == %Email{to: [{"", "tony.stark@example.com"}]}
 
-    email = email |> put_to({"Steve Rogers","steve.rogers@example.com"})
+    email = email |> put_to({"Steve Rogers", "steve.rogers@example.com"})
     assert email == %Email{to: [{"Steve Rogers", "steve.rogers@example.com"}]}
 
-    email = email |> put_to(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{to: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]}
+    email =
+      email |> put_to(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             to: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]
+           }
   end
 
   test "cc/2 add new recipient(s) to \"cc\"" do
@@ -95,11 +112,22 @@ defmodule Swoosh.EmailTest do
     assert email == %Email{cc: [{"", "ccny.stark@example.com"}]}
 
     email = email |> cc({"Steve Rogers", "steve.rogers@example.com"})
-    assert email == %Email{cc: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "ccny.stark@example.com"}]}
 
-    email = email |> cc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{cc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"},
-                               {"Steve Rogers", "steve.rogers@example.com"}, {"", "ccny.stark@example.com"}]}
+    assert email == %Email{
+             cc: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "ccny.stark@example.com"}]
+           }
+
+    email =
+      email |> cc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             cc: [
+               {"", "bruce.banner@example.com"},
+               {"Thor Odinson", "thor.odinson@example.com"},
+               {"Steve Rogers", "steve.rogers@example.com"},
+               {"", "ccny.stark@example.com"}
+             ]
+           }
   end
 
   test "put_cc/2 replace new recipient(s) in \"cc\"" do
@@ -108,11 +136,15 @@ defmodule Swoosh.EmailTest do
     email = email |> put_cc("ccny.stark@example.com")
     assert email == %Email{cc: [{"", "ccny.stark@example.com"}]}
 
-    email = email |> put_cc({"Steve Rogers","steve.rogers@example.com"})
+    email = email |> put_cc({"Steve Rogers", "steve.rogers@example.com"})
     assert email == %Email{cc: [{"Steve Rogers", "steve.rogers@example.com"}]}
 
-    email = email |> put_cc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{cc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]}
+    email =
+      email |> put_cc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             cc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]
+           }
   end
 
   test "bcc/2 add new recipient(s) to \"bcc\"" do
@@ -120,11 +152,22 @@ defmodule Swoosh.EmailTest do
     assert email == %Email{bcc: [{"", "bccny.stark@example.com"}]}
 
     email = email |> bcc({"Steve Rogers", "steve.rogers@example.com"})
-    assert email == %Email{bcc: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "bccny.stark@example.com"}]}
 
-    email = email |> bcc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{bcc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"},
-                               {"Steve Rogers", "steve.rogers@example.com"}, {"", "bccny.stark@example.com"}]}
+    assert email == %Email{
+             bcc: [{"Steve Rogers", "steve.rogers@example.com"}, {"", "bccny.stark@example.com"}]
+           }
+
+    email =
+      email |> bcc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             bcc: [
+               {"", "bruce.banner@example.com"},
+               {"Thor Odinson", "thor.odinson@example.com"},
+               {"Steve Rogers", "steve.rogers@example.com"},
+               {"", "bccny.stark@example.com"}
+             ]
+           }
   end
 
   test "put_bcc/2 replace new recipient(s) in \"bcc\"" do
@@ -133,11 +176,15 @@ defmodule Swoosh.EmailTest do
     email = email |> put_bcc("bccny.stark@example.com")
     assert email == %Email{bcc: [{"", "bccny.stark@example.com"}]}
 
-    email = email |> put_bcc({"Steve Rogers","steve.rogers@example.com"})
+    email = email |> put_bcc({"Steve Rogers", "steve.rogers@example.com"})
     assert email == %Email{bcc: [{"Steve Rogers", "steve.rogers@example.com"}]}
 
-    email = email |> put_bcc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
-    assert email == %Email{bcc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]}
+    email =
+      email |> put_bcc(["bruce.banner@example.com", {"Thor Odinson", "thor.odinson@example.com"}])
+
+    assert email == %Email{
+             bcc: [{"", "bruce.banner@example.com"}, {"Thor Odinson", "thor.odinson@example.com"}]
+           }
   end
 
   test "header/3" do
@@ -145,30 +192,33 @@ defmodule Swoosh.EmailTest do
     assert email == %Email{headers: %{"X-Accept-Language" => "en"}}
 
     email = email |> header("X-Mailer", "swoosh")
-    assert email == %Email{headers: %{"X-Accept-Language" => "en",
-                                      "X-Mailer" => "swoosh"}}
+    assert email == %Email{headers: %{"X-Accept-Language" => "en", "X-Mailer" => "swoosh"}}
   end
 
   test "header/3 should raise if invalid name or value is passed" do
-    assert_raise ArgumentError, """
-    header/3 expects the header name and value to be strings.
+    assert_raise ArgumentError,
+                 """
+                 header/3 expects the header name and value to be strings.
 
-    Instead it got:
-      name: `"X-Accept-Language"`.
-      value: `nil`.
-    """, fn ->
-      new() |> header("X-Accept-Language", nil)
-    end
+                 Instead it got:
+                   name: `"X-Accept-Language"`.
+                   value: `nil`.
+                 """,
+                 fn ->
+                   new() |> header("X-Accept-Language", nil)
+                 end
 
-    assert_raise ArgumentError, """
-    header/3 expects the header name and value to be strings.
+    assert_raise ArgumentError,
+                 """
+                 header/3 expects the header name and value to be strings.
 
-    Instead it got:
-      name: `nil`.
-      value: `"swoosh"`.
-    """, fn ->
-      new() |> header(nil, "swoosh")
-    end
+                 Instead it got:
+                   name: `nil`.
+                   value: `"swoosh"`.
+                 """,
+                 fn ->
+                   new() |> header(nil, "swoosh")
+                 end
   end
 
   test "put_private/3" do

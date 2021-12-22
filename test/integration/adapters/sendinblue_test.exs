@@ -10,6 +10,7 @@ defmodule Swoosh.Integration.Adapters.SendinblueTest do
       api_key: System.get_env("SENDINBLUE_API_KEY"),
       domain: System.get_env("SENDINBLUE_DOMAIN")
     ]
+
     {:ok, config: config}
   end
 

@@ -6,19 +6,18 @@ defmodule Swoosh.Adapters.DynTest do
   alias Swoosh.Adapters.Dyn
 
   @success_response """
-    {
-      "response": {
-        "status": 200,
-        "message": "OK",
-        "data": "250 2.1.5 Ok"
-      }
+  {
+    "response": {
+      "status": 200,
+      "message": "OK",
+      "data": "250 2.1.5 Ok"
     }
-    """
+  }
+  """
 
   setup do
-    bypass = Bypass.open
-    config = [base_url: "http://localhost:#{bypass.port}",
-              api_key: "fake"]
+    bypass = Bypass.open()
+    config = [base_url: "http://localhost:#{bypass.port}", api_key: "fake"]
 
     valid_email =
       new()
@@ -31,9 +30,10 @@ defmodule Swoosh.Adapters.DynTest do
   end
 
   test "a sent email results in :ok", %{bypass: bypass, config: config, valid_email: email} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
       expected_path = "/rest/json/send"
+
       body_params = %{
         "apikey" => "fake",
         "bodyhtml" => "<h1>Hello</h1>",
@@ -41,19 +41,22 @@ defmodule Swoosh.Adapters.DynTest do
         "subject" => "Hello, Avengers!",
         "to" => "\"Steve Rogers\" <steve.rogers@example.com>"
       }
+
       assert body_params == conn.body_params
       assert expected_path == conn.request_path
       assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
     assert Dyn.deliver(email, config) == {:ok, "OK"}
   end
 
   test "an email with attachments results in DeliveryError", %{config: config, valid_email: email} do
-    email_with_attachments = email
-    |> attachment("README.md")
+    email_with_attachments =
+      email
+      |> attachment("README.md")
+
     assert_raise DeliveryError, fn ->
       Dyn.deliver(email_with_attachments, config)
     end
@@ -65,13 +68,17 @@ defmodule Swoosh.Adapters.DynTest do
       |> from({"T Stark", "tony.stark@example.com"})
       |> to({"Steve Rogers", "steve.rogers@example.com"})
       |> to("wasp.avengers@example.com")
-      |> bcc([{"Clinton Francis Barton", "hawk.eye@example.com"}, {"", "beast.avengers@example.com"}])
+      |> bcc([
+        {"Clinton Francis Barton", "hawk.eye@example.com"},
+        {"", "beast.avengers@example.com"}
+      ])
       |> subject("Hello, Avengers!")
       |> html_body("<h1>Hello</h1>")
       |> text_body("Hello")
 
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
+
       body_params = %{
         "apikey" => "fake",
         "bcc" => %{
@@ -88,31 +95,32 @@ defmodule Swoosh.Adapters.DynTest do
       assert body_params == conn.body_params
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
     assert Dyn.deliver(email, config) == {:ok, "OK"}
   end
 
   test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       Plug.Conn.resp(conn, 404, "Not Found")
-    end
+    end)
 
     assert Dyn.deliver(email, config) == {:error, "Not found"}
   end
 
   test "deliver/1 with 503 response", %{bypass: bypass, valid_email: email, config: config} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       Plug.Conn.resp(conn, 503, "Service Unavailable")
-    end
+    end)
 
     assert Dyn.deliver(email, config) == {:error, "Service Unavailable"}
   end
 
   test "deliver/1 with 500 response", %{bypass: bypass, valid_email: email, config: config} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       Plug.Conn.resp(conn, 500, "{\"message\": \"error\"}")
-    end
+    end)
+
     assert Dyn.deliver(email, config) == {:error, "Error: \"{\\\"message\\\": \\\"error\\\"}\""}
   end
 
@@ -121,10 +129,10 @@ defmodule Swoosh.Adapters.DynTest do
   end
 
   test "validate_config/1 with invalid config" do
-    assert_raise ArgumentError, """
-    expected [:api_key] to be set, got: []
-    """, fn ->
-      Dyn.validate_config([])
-    end
+    assert_raise ArgumentError,
+                 """
+                 expected [:api_key] to be set, got: []
+                 """,
+                 fn -> Dyn.validate_config([]) end
   end
 end

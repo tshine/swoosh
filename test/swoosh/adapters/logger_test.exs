@@ -8,26 +8,28 @@ defmodule Swoosh.Adapters.LoggerTest do
   end
 
   setup_all do
-    email = Swoosh.Email.new(
-      from: "tony.stark@example.com",
-      to: "steve.rogers@example.com",
-      subject: "Hello, Avengers!",
-      text_body: "Hello!"
-    )
+    email =
+      Swoosh.Email.new(
+        from: "tony.stark@example.com",
+        to: "steve.rogers@example.com",
+        subject: "Hello, Avengers!",
+        text_body: "Hello!"
+      )
+
     {:ok, email: email}
   end
 
   test "deliver/1", %{email: email} do
     assert capture_log(fn ->
-      {status, _} = LoggerMailer.deliver(email)
-      assert status == :ok
-    end) =~ "New email delivered to steve.rogers@example.com"
+             {status, _} = LoggerMailer.deliver(email)
+             assert status == :ok
+           end) =~ "New email delivered to steve.rogers@example.com"
   end
 
   test "deliver/1, log full email", %{email: email} do
     assert capture_log(fn ->
-      {status, _} = LoggerMailer.deliver(email, log_full_email: true)
-      assert status == :ok
-    end) =~ "New email delivered\nFrom: tony.stark@example.com"
+             {status, _} = LoggerMailer.deliver(email, log_full_email: true)
+             assert status == :ok
+           end) =~ "New email delivered\nFrom: tony.stark@example.com"
   end
 end

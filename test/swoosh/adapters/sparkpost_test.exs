@@ -15,7 +15,8 @@ defmodule Swoosh.Adapters.SparkPostTest do
   """
 
   setup do
-    bypass = Bypass.open
+    bypass = Bypass.open()
+
     config = [
       endpoint: "http://localhost:#{bypass.port}",
       api_key: "fake"
@@ -32,16 +33,17 @@ defmodule Swoosh.Adapters.SparkPostTest do
   end
 
   test "a sent email results in :ok", %{bypass: bypass, config: config, valid_email: email} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
       expected_path = "/transmissions"
+
       body_params = %{
         "content" => %{
           "from" => %{"email" => "tony.stark@example.com", "name" => ""},
           "headers" => %{},
           "html" => "<h1>Hello</h1>",
           "subject" => "Hello, Avengers!",
-          "text" => nil,
+          "text" => nil
         },
         "recipients" => [
           %{
@@ -53,14 +55,16 @@ defmodule Swoosh.Adapters.SparkPostTest do
           }
         ]
       }
+
       assert body_params == conn.body_params
       assert expected_path == conn.request_path
       assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
-    assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
+    assert {:ok, Swoosh.json_library().decode!(@success_response)} ==
+             SparkPost.deliver(email, config)
   end
 
   test "deliver/1 with all fields returns :ok", %{bypass: bypass, config: config} do
@@ -78,9 +82,10 @@ defmodule Swoosh.Adapters.SparkPostTest do
       |> html_body("<h1>Hello</h1>")
       |> text_body("Hello")
 
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
       expected_path = "/transmissions"
+
       body_params = %{
         "content" => %{
           "from" => %{
@@ -93,7 +98,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
           "html" => "<h1>Hello</h1>",
           "reply_to" => "office.avengers@example.com",
           "subject" => "Hello, Avengers!",
-          "text" => "Hello",
+          "text" => "Hello"
         },
         "recipients" => [
           %{
@@ -109,7 +114,8 @@ defmodule Swoosh.Adapters.SparkPostTest do
               "header_to" => "wasp.avengers@example.com,steve.rogers@example.com",
               "name" => "Steve Rogers"
             }
-          }, %{
+          },
+          %{
             "address" => %{
               "email" => "thor.odinson@example.com",
               "header_to" => "wasp.avengers@example.com,steve.rogers@example.com",
@@ -145,9 +151,10 @@ defmodule Swoosh.Adapters.SparkPostTest do
       assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
-    assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
+    assert {:ok, Swoosh.json_library().decode!(@success_response)} ==
+             SparkPost.deliver(email, config)
   end
 
   test "deliver/1 with custom headers returns :ok", %{bypass: bypass, config: config} do
@@ -164,9 +171,10 @@ defmodule Swoosh.Adapters.SparkPostTest do
       |> header("X-Accept-Language", "en")
       |> header("X-Mailer", "swoosh")
 
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
       expected_path = "/transmissions"
+
       body_params = %{
         "content" => %{
           "from" => %{
@@ -181,7 +189,7 @@ defmodule Swoosh.Adapters.SparkPostTest do
           },
           "html" => "<h1>Hello</h1>",
           "text" => "Hello",
-          "subject" => "Hello, Avengers!",
+          "subject" => "Hello, Avengers!"
         },
         "recipients" => [
           %{
@@ -206,9 +214,10 @@ defmodule Swoosh.Adapters.SparkPostTest do
       assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
-    assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
+    assert {:ok, Swoosh.json_library().decode!(@success_response)} ==
+             SparkPost.deliver(email, config)
   end
 
   test "deliver/1 with template returns :ok", %{bypass: bypass, config: config} do
@@ -222,9 +231,10 @@ defmodule Swoosh.Adapters.SparkPostTest do
       |> put_provider_option(:template_id, "my-first-email")
       |> put_provider_option(:substitution_data, %{first_name: "Peter", last_name: "Parker"})
 
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       conn = parse(conn)
       expected_path = "/transmissions"
+
       body_params = %{
         "content" => %{
           "from" => %{
@@ -266,23 +276,24 @@ defmodule Swoosh.Adapters.SparkPostTest do
       assert "POST" == conn.method
 
       Plug.Conn.resp(conn, 200, @success_response)
-    end
+    end)
 
-    assert {:ok, Swoosh.json_library.decode!(@success_response)} == SparkPost.deliver(email, config)
+    assert {:ok, Swoosh.json_library().decode!(@success_response)} ==
+             SparkPost.deliver(email, config)
   end
 
   test "deliver/1 with 4xx response", %{bypass: bypass, config: config, valid_email: email} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       Plug.Conn.resp(conn, 422, "{}")
-    end
+    end)
 
     assert {:error, {422, %{}}} = SparkPost.deliver(email, config)
   end
 
   test "deliver/1 with 5xx response", %{bypass: bypass, valid_email: email, config: config} do
-    Bypass.expect bypass, fn conn ->
+    Bypass.expect(bypass, fn conn ->
       Plug.Conn.resp(conn, 500, "{}")
-    end
+    end)
 
     assert {:error, {500, %{}}} = SparkPost.deliver(email, config)
   end
@@ -292,10 +303,12 @@ defmodule Swoosh.Adapters.SparkPostTest do
   end
 
   test "validate_config/1 with invalid config" do
-    assert_raise ArgumentError, """
-    expected [:api_key] to be set, got: []
-    """, fn ->
-      SparkPost.validate_config([])
-    end
+    assert_raise ArgumentError,
+                 """
+                 expected [:api_key] to be set, got: []
+                 """,
+                 fn ->
+                   SparkPost.validate_config([])
+                 end
   end
 end

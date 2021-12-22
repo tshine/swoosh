@@ -35,12 +35,12 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-          "sender" => %{"email" => "tony.stark@example.com"},
-          "to" => [%{"email" => "steve.rogers@example.com"}],
-          "htmlContent" => "<h1>Hello</h1>",
-          "textContent" => "Hello",
-          "subject" => "Hello, Avengers!"
-        }
+               "sender" => %{"email" => "tony.stark@example.com"},
+               "to" => [%{"email" => "steve.rogers@example.com"}],
+               "htmlContent" => "<h1>Hello</h1>",
+               "textContent" => "Hello",
+               "subject" => "Hello, Avengers!"
+             }
 
       make_response(conn)
     end)
@@ -60,11 +60,11 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-          "sender" => %{"email" => "tony.stark@example.com"},
-          "to" => [%{"email" => "steve.rogers@example.com"}],
-          "textContent" => "Hello",
-          "subject" => "Hello, Avengers!"
-        }
+               "sender" => %{"email" => "tony.stark@example.com"},
+               "to" => [%{"email" => "steve.rogers@example.com"}],
+               "textContent" => "Hello",
+               "subject" => "Hello, Avengers!"
+             }
 
       make_response(conn)
     end)
@@ -84,11 +84,11 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "sender" => %{"email" => "tony.stark@example.com"},
-        "to" => [%{"email" => "steve.rogers@example.com"}],
-        "htmlContent" => "<h1>Hello</h1>",
-        "subject" => "Hello, Avengers!"
-      }
+               "sender" => %{"email" => "tony.stark@example.com"},
+               "to" => [%{"email" => "steve.rogers@example.com"}],
+               "htmlContent" => "<h1>Hello</h1>",
+               "subject" => "Hello, Avengers!"
+             }
 
       make_response(conn)
     end)
@@ -114,21 +114,21 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "sender" => %{"name" => "T Stark", "email" => "tony.stark@example.com"},
-        "replyTo" => %{"email" => "hulk.smash@example.com"},
-        "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
-        "cc" => [
-          %{"name" => "Janet Pym", "email" => "wasp.avengers@example.com"},
-          %{"email" => "hulk.smash@example.com"}
-        ],
-        "bcc" => [
-          %{"name" => "Henry McCoy", "email" => "beast.avengers@example.com"},
-          %{"email" => "thor.odinson@example.com"}
-        ],
-        "textContent" => "Hello",
-        "htmlContent" => "<h1>Hello</h1>",
-        "subject" => "Hello, Avengers!"
-      }
+               "sender" => %{"name" => "T Stark", "email" => "tony.stark@example.com"},
+               "replyTo" => %{"email" => "hulk.smash@example.com"},
+               "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
+               "cc" => [
+                 %{"name" => "Janet Pym", "email" => "wasp.avengers@example.com"},
+                 %{"email" => "hulk.smash@example.com"}
+               ],
+               "bcc" => [
+                 %{"name" => "Henry McCoy", "email" => "beast.avengers@example.com"},
+                 %{"email" => "thor.odinson@example.com"}
+               ],
+               "textContent" => "Hello",
+               "htmlContent" => "<h1>Hello</h1>",
+               "subject" => "Hello, Avengers!"
+             }
 
       make_response(conn)
     end)
@@ -148,11 +148,11 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "sender" => %{"name" => "T Stark", "email" => "tony.stark@example.com"},
-        "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
-        "subject" => "Hello, Avengers!",
-        "templateId" => 42
-      }
+               "sender" => %{"name" => "T Stark", "email" => "tony.stark@example.com"},
+               "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
+               "subject" => "Hello, Avengers!",
+               "templateId" => 42
+             }
 
       make_response(conn)
     end)
@@ -163,30 +163,30 @@ defmodule Swoosh.Adapters.SendinblueTest do
   test "deliver/1 with template_id and params returns :ok", %{bypass: bypass, config: config} do
     email =
       new()
-        |> from("tony.stark@example.com")
-        |> to("steve.rogers@example.com")
-        |> subject("Hello, Avengers!")
-        |> text_body("Hello")
-        |> put_provider_option(:template_id, 42)
-        |> put_provider_option(:params, %{
-          sample_template_param: "sample value",
-          another_one: 99
-        })
+      |> from("tony.stark@example.com")
+      |> to("steve.rogers@example.com")
+      |> subject("Hello, Avengers!")
+      |> text_body("Hello")
+      |> put_provider_option(:template_id, 42)
+      |> put_provider_option(:params, %{
+        sample_template_param: "sample value",
+        another_one: 99
+      })
 
     Bypass.expect_once(bypass, "POST", "/v3/smtp/email", fn conn ->
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "sender" => %{"email" => "tony.stark@example.com"},
-        "to" => [%{"email" => "steve.rogers@example.com"}],
-        "textContent" => "Hello",
-        "subject" => "Hello, Avengers!",
-        "templateId" => 42,
-        "params" => %{
-          "sample_template_param" => "sample value",
-          "another_one" => 99
-        },
-      }
+               "sender" => %{"email" => "tony.stark@example.com"},
+               "to" => [%{"email" => "steve.rogers@example.com"}],
+               "textContent" => "Hello",
+               "subject" => "Hello, Avengers!",
+               "templateId" => 42,
+               "params" => %{
+                 "sample_template_param" => "sample value",
+                 "another_one" => 99
+               }
+             }
 
       make_response(conn)
     end)
@@ -211,12 +211,12 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
-        "textContent" => "Hello",
-        "htmlContent" => "<h1>Hello</h1>",
-        "subject" => "Hello, Avengers!",
-        "templateId" => "Welcome"
-      }
+               "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
+               "textContent" => "Hello",
+               "htmlContent" => "<h1>Hello</h1>",
+               "subject" => "Hello, Avengers!",
+               "templateId" => "Welcome"
+             }
 
       make_response(conn)
     end)
@@ -240,12 +240,12 @@ defmodule Swoosh.Adapters.SendinblueTest do
       conn = parse(conn)
 
       assert conn.body_params == %{
-        "sender" => %{"email" => "tony.stark@example.com"},
-        "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
-        "textContent" => "Hello",
-        "htmlContent" => "<h1>Hello</h1>",
-        "templateId" => "Welcome"
-      }
+               "sender" => %{"email" => "tony.stark@example.com"},
+               "to" => [%{"name" => "Steve Rogers", "email" => "steve.rogers@example.com"}],
+               "textContent" => "Hello",
+               "htmlContent" => "<h1>Hello</h1>",
+               "templateId" => "Welcome"
+             }
 
       make_response(conn)
     end)
@@ -259,10 +259,12 @@ defmodule Swoosh.Adapters.SendinblueTest do
     Bypass.expect_once(bypass, &Plug.Conn.resp(&1, 429, error))
 
     response =
-      {:error, {429, %{
-        "code" => "too_many_requests",
-        "message" => "The expected rate limit is exceeded.",
-      }}}
+      {:error,
+       {429,
+        %{
+          "code" => "too_many_requests",
+          "message" => "The expected rate limit is exceeded."
+        }}}
 
     assert Sendinblue.deliver(email, config) == response
   end
@@ -273,9 +275,11 @@ defmodule Swoosh.Adapters.SendinblueTest do
     Bypass.expect_once(bypass, &Plug.Conn.resp(&1, 400, error))
 
     response =
-        {:error, {400, %{
+      {:error,
+       {400,
+        %{
           "code" => "invalid_parameter",
-          "message" => "error message explained.",
+          "message" => "error message explained."
         }}}
 
     assert Sendinblue.deliver(email, config) == response

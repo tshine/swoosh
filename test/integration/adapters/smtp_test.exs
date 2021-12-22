@@ -14,6 +14,7 @@ defmodule Swoosh.Integration.Adapters.SMTPTest do
       tls: :always,
       auth: :always
     ]
+
     {:ok, config: config}
   end
 
@@ -46,7 +47,7 @@ defmodule Swoosh.Integration.Adapters.SMTPTest do
         type: :attachment,
         headers: []
       })
+
     assert {:ok, _response} = Swoosh.Adapters.SMTP.deliver(email, config)
   end
-
 end

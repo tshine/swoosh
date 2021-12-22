@@ -20,7 +20,7 @@ defmodule Swoosh.Adapters.XML.HelpersTest do
   test "first_text returns the text of the first xml node found", %{xml_string: xml_string} do
     text =
       xml_string
-      |> XMLHelper.parse
+      |> XMLHelper.parse()
       |> XMLHelper.first_text("//test")
 
     assert text == "Test Text"
@@ -29,7 +29,7 @@ defmodule Swoosh.Adapters.XML.HelpersTest do
   test "first_text returns the a blank on first xml found where empty", %{xml_string: xml_string} do
     text =
       xml_string
-      |> XMLHelper.parse
+      |> XMLHelper.parse()
       |> XMLHelper.first_text("//inside")
 
     assert text == ""
@@ -38,9 +38,9 @@ defmodule Swoosh.Adapters.XML.HelpersTest do
   test "first returns the first xml node found and prints text", %{xml_string: xml_string} do
     text =
       xml_string
-      |> XMLHelper.parse
+      |> XMLHelper.parse()
       |> XMLHelper.first("//test")
-      |> XMLHelper.text
+      |> XMLHelper.text()
 
     assert text == "Test Text"
   end
@@ -48,9 +48,9 @@ defmodule Swoosh.Adapters.XML.HelpersTest do
   test "text prints blank on empty node", %{xml_string: xml_string} do
     text =
       xml_string
-      |> XMLHelper.parse
+      |> XMLHelper.parse()
       |> XMLHelper.first("//test2/inside")
-      |> XMLHelper.text
+      |> XMLHelper.text()
 
     assert text == ""
   end

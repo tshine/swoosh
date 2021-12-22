@@ -55,9 +55,7 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "assert email sent with specific to (list)" do
-    assert_email_sent(
-      to: ["steve.rogers@example.com", "bruce.banner@example.com"]
-    )
+    assert_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
   end
 
   test "assert email sent with condition" do
@@ -235,9 +233,7 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "refute email sent with expected to" do
-    assert_email_sent(
-      to: ["steve.rogers@example.com", "bruce.banner@example.com"]
-    )
+    assert_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
 
     deliver(new(to: "steve.rogers@example.com"))
 
@@ -248,9 +244,7 @@ defmodule Swoosh.TestAssertionsTest do
 
   test "refute email sent with expected to (list)" do
     assert_raise ExUnit.AssertionError, fn ->
-      refute_email_sent(
-        to: ["steve.rogers@example.com", "bruce.banner@example.com"]
-      )
+      refute_email_sent(to: ["steve.rogers@example.com", "bruce.banner@example.com"])
     end
   end
 
@@ -263,9 +257,7 @@ defmodule Swoosh.TestAssertionsTest do
   end
 
   test "refute email sent with expected cc" do
-    assert_email_sent(
-      cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"]
-    )
+    assert_email_sent(cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"])
 
     deliver(new(cc: "natasha.romanoff@example.com"))
 
@@ -276,9 +268,7 @@ defmodule Swoosh.TestAssertionsTest do
 
   test "refute email sent with expected cc (list)" do
     assert_raise ExUnit.AssertionError, fn ->
-      refute_email_sent(
-        cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"]
-      )
+      refute_email_sent(cc: ["natasha.romanoff@example.com", "stephen.strange@example.com"])
     end
   end
 

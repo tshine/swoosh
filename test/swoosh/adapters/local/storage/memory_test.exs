@@ -10,7 +10,7 @@ defmodule Swoosh.Adapters.Local.Storage.MemoryTest do
 
   test "start_link/0 starts with an empty mailbox" do
     {:ok, pid} = GenServer.start_link(Memory, [])
-    count = GenServer.call(pid, :all) |> Enum.count
+    count = GenServer.call(pid, :all) |> Enum.count()
     assert count == 0
   end
 
@@ -21,7 +21,10 @@ defmodule Swoosh.Adapters.Local.Storage.MemoryTest do
 
   test "get an email from the mailbox" do
     Memory.push(%Swoosh.Email{})
-    %Swoosh.Email{headers: %{"Message-ID" => id}} = Memory.push(%Swoosh.Email{subject: "Hello, Avengers!"})
+
+    %Swoosh.Email{headers: %{"Message-ID" => id}} =
+      Memory.push(%Swoosh.Email{subject: "Hello, Avengers!"})
+
     Memory.push(%Swoosh.Email{})
     assert %Swoosh.Email{subject: "Hello, Avengers!"} = Memory.get(id)
   end

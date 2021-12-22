@@ -6,7 +6,11 @@ defmodule Swoosh.Integration.Adapters.SendgridTest do
   @moduletag integration: true
 
   setup_all do
-    config = [api_key: System.get_env("SENDGRID_API_KEY"), domain: System.get_env("SENDGRID_DOMAIN")]
+    config = [
+      api_key: System.get_env("SENDGRID_API_KEY"),
+      domain: System.get_env("SENDGRID_DOMAIN")
+    ]
+
     {:ok, config: config}
   end
 

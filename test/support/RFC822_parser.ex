@@ -6,8 +6,7 @@ defmodule Plug.Parsers.RFC822 do
   @behaviour Plug.Parsers
 
   def init(opts) do
-    {body_reader, opts} =
-      Keyword.pop(opts, :body_reader, {Plug.Conn, :read_body, []})
+    {body_reader, opts} = Keyword.pop(opts, :body_reader, {Plug.Conn, :read_body, []})
 
     {body_reader, nil, opts}
   end
