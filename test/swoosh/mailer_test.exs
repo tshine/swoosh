@@ -159,11 +159,13 @@ defmodule Swoosh.MailerTest do
   end
 
   describe "telemetry" do
-    setup do
-      handler = fn event, %{}, metadata, _ ->
+    defmodule TeleHandler do
+      def handle(event, %{}, metadata, _) do
         send(self(), {:telemetry, event, metadata})
       end
+    end
 
+    setup do
       on_exit(fn ->
         :telemetry.detach("telemetry-handler")
       end)
@@ -178,7 +180,7 @@ defmodule Swoosh.MailerTest do
           [:swoosh, :deliver_many, :stop],
           [:swoosh, :deliver_many, :exception]
         ],
-        handler,
+        &TeleHandler.handle/4,
         nil
       )
     end
