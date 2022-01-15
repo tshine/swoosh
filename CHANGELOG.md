@@ -1,5 +1,49 @@
 ## Changelog
 
+## 1.6.0
+
+### ✨ Features
+
+- allow custom CIDs for inline attachments @taobojlen (#665)
+- add OhMySMTP adapter @taobojlen (#663)
+
+### 🧰 Maintenance
+
+- Bump finch from 0.10.1 to 0.10.2 @dependabot (#661)
+- Bump ex_doc from 0.27.0 to 0.27.3 @dependabot (#660)
+- Bump ex_doc from 0.26.0 to 0.27.0 @dependabot (#659)
+- Bump finch from 0.10.0 to 0.10.1 @dependabot (#655)
+- Bump jason from 1.2.2 to 1.3.0 @dependabot (#654)
+- Bump finch from 0.9.1 to 0.10.0 @dependabot (#651)
+- Config bypass only on test @nallwhy (#650)
+
+### 📝 Documentation
+
+- Mention E2E tests @princemaple (#664)
+- Add configuration options to Mailgun documentation @Zurga (#652)
+- Add example to Dyn adapter @kianmeng (#647)
+- Add provider options for Sparkpost @kianmeng (#646)
+- Add provider options doc for socketlabs @kianmeng (#645)
+- Update provider options doc for Sendinblue @kianmeng (#644)
+- Update provider options doc for Sendgrid @kianmeng (#643)
+- Update provider options doc for Postmark @kianmeng (#642)
+- Add provider options doc for Mandrill adapter @kianmeng (#641)
+- Add provider options doc for Mailjet @kianmeng (#640)
+- Update provider options doc for Mailgun adapter @kianmeng (#639)
+- Add provider options doc for Amazon SES adapter @kianmeng (#638)
+- Correct sample configuration for gmail adapter @aarongraham (#637)
+- Clarify that you need to add :gen_smtp as a dependency @Hermanverschooten (#635)
+
+### New Contributors
+
+- @Hermanverschooten made their first contribution in https://github.com/swoosh/swoosh/pull/635
+- @aarongraham made their first contribution in https://github.com/swoosh/swoosh/pull/637
+- @nallwhy made their first contribution in https://github.com/swoosh/swoosh/pull/650
+- @Zurga made their first contribution in https://github.com/swoosh/swoosh/pull/652
+- @taobojlen made their first contribution in https://github.com/swoosh/swoosh/pull/663
+
+**Full Changelog**: https://github.com/swoosh/swoosh/compare/v1.5.2...v1.6.0
+
 ## 1.5.2
 
 ### Fixes
