@@ -88,13 +88,15 @@ defmodule Swoosh.TestAssertions do
       iex> Swoosh.Adapters.Test.deliver(email, [])
 
       # assert a specific email was sent
-      iex> assert_email_sent email
+      iex> assert_email_sent(email)
 
       # assert an email with specific field(s) was sent
-      iex> assert_email_sent subject: "Hello, Avengers!"
+      iex> assert_email_sent(subject: "Hello, Avengers!")
 
       # assert an email that satisfies a condition
-      iex> assert_email_sent fn email -> length(email.to) == 2 end
+      iex> assert_email_sent(fn email ->
+      ...>   assert length(email.to) == 2
+      ...> end)
   """
   def assert_email_sent(%Email{} = email) do
     assert_received {:email, ^email}
