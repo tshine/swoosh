@@ -1,5 +1,9 @@
 ## Changelog
 
+## 1.6.1
+
+- Add fields to Postmark `deliver_many` response @zporter (#668)
+
 ## 1.6.0
 
 ### ✨ Features
