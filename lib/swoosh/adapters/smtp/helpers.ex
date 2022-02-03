@@ -48,7 +48,7 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
   defp prepare_headers(email) do
     []
     |> prepare_additional_headers(email)
-    |> prepare_mime_version
+    |> prepare_mime_version()
     |> prepare_reply_to(email)
     |> prepare_subject(email)
     |> prepare_bcc(email)
@@ -172,7 +172,8 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
   end
 
   defp prepare_attachment(
-         %{
+         %Swoosh.Attachment{
+           cid: cid,
            filename: filename,
            content_type: content_type,
            type: attachment_type,
@@ -201,10 +202,10 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
           format,
           [
             {"Content-Transfer-Encoding", "base64"},
-            {"Content-Id", "<#{filename}>"}
+            {"Content-Id", "<#{cid || filename}>"}
             | custom_headers
           ],
-          attachment_content_params(:inline),
+          attachment_content_params(:inline, filename),
           content
         }
     end
@@ -227,19 +228,19 @@ defmodule Swoosh.Adapters.SMTP.Helpers do
   end
 
   if gen_smtp_major >= 1 do
-    defp attachment_content_params(:inline) do
+    defp attachment_content_params(:inline, filename) do
       %{
         content_type_params: [],
         disposition: "inline",
-        disposition_params: []
+        disposition_params: [{"filename", filename}]
       }
     end
   else
-    defp attachment_content_params(:inline) do
+    defp attachment_content_params(:inline, filename) do
       [
         {"content-type-params", []},
         {"disposition", "inline"},
-        {"disposition-params", []}
+        {"disposition-params", [{"filename", filename}]}
       ]
     end
   end
