@@ -1,5 +1,11 @@
 ## Changelog
 
+## 1.6.2
+
+- SMTP can now utilize the new `:cid` addition in attachments, if `:cid` is `nil` it will fallback
+  to original behavior and use `:filename`
+- Fixed filename for inline images sent via SMTP
+
 ## 1.6.1
 
 - Add fields to Postmark `deliver_many` response @zporter (#668)
